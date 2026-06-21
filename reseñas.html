@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenesisRecarga - Reseñas de Clientes</title>
+<style>
+    /* Estilos Generales (Heredados del Catálogo) */
+    :root {
+        --bg-color: #0f111a;
+        --card-bg: #1e2130;
+        --primary-color: #00ffcc;
+        --primary-hover: #00ccaa;
+        --text-light: #f0f0f0;
+        --text-muted: #a0a5c0;
+        --star-color: #ffb400;
+        --card-border: rgba(0, 255, 204, 0.1);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-light);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* Navegación */
+    header {
+        background-color: rgba(20, 22, 34, 0.95);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 5%;
+        max-width: 1400px;
+        margin: 0 auto;
+        flex-wrap: nowrap;
+        gap: 20px;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    .logo span {
+        color: var(--primary-color);
+    }
+
+    .menu {
+        display: flex;
+        gap: 20px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .menu a {
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+        white-space: nowrap;
+    }
+
+    .menu a:hover {
+        color: var(--primary-color);
+    }
+
+    .nav-right {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+    }
+
+    .search {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: #eef2ff;
+        width: 220px;
+    }
+
+    .search::placeholder {
+        color: rgba(255, 255, 255, 0.55);
+    }
+
+    .balance {
+        background: #142338;
+        padding: 12px 18px;
+        border-radius: 12px;
+        color: #7bf2b6;
+        font-weight: 700;
+        border: 1px solid rgba(123, 242, 182, 0.2);
+    }
+
+    /* Encabezado de la página */
+    .section-title {
+        text-align: center;
+        padding: 4rem 1rem 2rem;
+        background: linear-gradient(to bottom, rgba(0,255,204,0.05) 0%, transparent 100%);
+    }
+
+    .section-title h2 {
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .section-title p {
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    /* Contenedor Principal */
+    .container {
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 5%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    @media (min-width: 992px) {
+        .container {
+            flex-direction: row-reverse;
+            align-items: flex-start;
+        }
+    }
+
+    /* --- FORMULARIO DE RESEÑAS --- */
+    .review-form-container {
+        flex: 1;
+        min-width: 320px;
+        max-width: 100%;
+        position: sticky;
+        top: 100px;
+    }
+
+    .review-form {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .review-form h3 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        border-bottom: 2px solid rgba(0, 255, 204, 0.2);
+        padding-bottom: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .form-group input, 
+    .form-group textarea {
+        width: 100%;
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid #3d4360;
+        background-color: #141622;
+        color: white;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus, 
+    .form-group textarea:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
+    }
+
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    /* Selector de Estrellas Interactivo */
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse; /* Para que el hover funcione de derecha a izquierda */
+        justify-content: flex-end;
+        gap: 5px;
+    }
+
+    .star-rating input { display: none; }
+
+    .star-rating label {
+        cursor: pointer;
+        font-size: 2rem;
+        color: #3d4360; /* Color inactivo */
+        transition: color 0.2s;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: var(--star-color); /* Color activo (amarillo/dorado) */
+    }
+
+    .btn-submit {
+        width: 100%;
+        background-color: var(--primary-color);
+        color: #000;
+        border: none;
+        padding: 15px;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 255, 204, 0.3);
+    }
+
+    .btn-submit:disabled {
+        background-color: #3d4360;
+        color: #7a809c;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .message-box {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: bold;
+        display: none; /* Oculto por defecto */
+    }
+
+    .message-success {
+        background-color: rgba(37, 211, 102, 0.1);
+        color: #25D366;
+        border: 1px solid #25D366;
+    }
+
+    .message-error {
+        background-color: rgba(255, 107, 107, 0.1);
+        color: #ff6b6b;
+        border: 1px solid #ff6b6b;
+    }
+
+    /* --- LISTA DE RESEÑAS --- */
+    .reviews-list-container {
+        flex: 2;
+        width: 100%;
+    }
+
+    .status-message {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 2rem;
+        font-size: 1.2rem;
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        border: 1px dashed #3d4360;
+    }
+
+    .reviews-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        align-items: start; /* Para que las tarjetas tengan altura variable */
+    }
+
+    .review-card {
+        background-color: var(--card-bg);
+        border: 1px solid #2a2e42;
+        border-radius: 15px;
+        padding: 25px;
+        transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .review-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 4px; height: 100%;
+        background-color: var(--primary-color);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .review-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        border-color: rgba(0, 255, 204, 0.3);
+    }
+
+    .review-card:hover::before {
+        opacity: 1;
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .reviewer-info h3 {
+        color: white;
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .verified-badge {
+        color: #25D366;
+        font-size: 0.9rem;
+    }
+
+    .review-date {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .review-stars {
+        color: var(--star-color);
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+    }
+
+    .review-body {
+        color: #d1d5db;
+        line-height: 1.6;
+        font-size: 0.95rem;
+        font-style: italic;
+    }
+
+    .review-body::before { content: '"'; font-size: 1.5rem; color: var(--primary-color); opacity: 0.5; margin-right: 5px; }
+    .review-body::after { content: '"'; font-size: 1.5rem; color: var(--primary-color); opacity: 0.5; margin-left: 5px; }
+
+
+    /* Footer y Botón Flotante */
+    footer { text-align: center; padding: 2rem; background-color: #141622; color: var(--text-muted); margin-top: auto; border-top: 1px solid #2a2e42; }
+    .whatsapp-bubble { position: fixed; bottom: 30px; right: 30px; background-color: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(37,211,102,.4); text-decoration: none; transition: transform .3s; z-index: 1000; }
+    .whatsapp-bubble:hover { transform: scale(1.1); }
+
+    /* Responsividad Menú */
+    @media (max-width: 768px) {
+        .navbar { flex-direction: column; text-align: center; }
+        .nav-right { width: 100%; flex-direction: column; }
+        .search { width: 100%; }
+        .section-title { padding: 2rem 1rem; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="navbar">
+        <div class="logo">Genesis<span>Recarga</span></div>
+        <nav class="menu">
+            <a href="inicio.html">Inicio</a>
+            <a href="catalogo.html">Catálogo</a>
+            <a href="streaming.html">Streaming</a>
+            <a href="reseñas.html" style="color: var(--primary-color);">Reseñas</a>
+            <a href="soporte.html">Soporte</a>
+        </nav>
+        <div class="nav-right">
+            <input class="search" type="text" id="searchInput" placeholder="Buscar en reseñas...">
+            <div class="balance">WhatsApp: +591-77048918</div>
+        </div>
+    </div>
+</header>
+
+<section class="section-title">
+    <h2>¿Qué dicen nuestros clientes?</h2>
+    <p>La confianza es nuestro pilar. Lee las experiencias reales de usuarios que ya recargaron sus juegos favoritos con nosotros.</p>
+</section>
+
+<section class="container">
+    
+    <!-- COLUMNA DERECHA / SUPERIOR: Formulario -->
+    <div class="review-form-container">
+        <div class="review-form">
+            <h3>Deja tu valoración</h3>
+            
+            <div class="form-group">
+                <label>Calificación</label>
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5" checked />
+                    <label for="star5" title="5 estrellas">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" />
+                    <label for="star4" title="4 estrellas">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" />
+                    <label for="star3" title="3 estrellas">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" />
+                    <label for="star2" title="2 estrellas">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" />
+                    <label for="star1" title="1 estrella">★</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="reviewName">Tu Nombre o Nickname</label>
+                <input type="text" id="reviewName" placeholder="Ej: Juan Perez o GamerPro99" maxlength="30" />
+            </div>
+
+            <div class="form-group">
+                <label for="reviewText">Cuéntanos tu experiencia</label>
+                <textarea id="reviewText" placeholder="¿Qué compraste? ¿Qué te pareció la atención?..." maxlength="300"></textarea>
+            </div>
+
+            <button id="submitReview" class="btn-submit">Publicar Reseña</button>
+            <div id="formMessage" class="message-box"></div>
+        </div>
+    </div>
+
+    <!-- COLUMNA IZQUIERDA / INFERIOR: Lista de Reseñas -->
+    <div class="reviews-list-container">
+        <div id="statusMessage" class="status-message">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16" style="margin-bottom: 10px; opacity: 0.5; display:block; margin: 0 auto;">
+                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 0-.038.282l.893 2.873a.25.25 0 0 1-.383.277l-2.45-1.748a.25.25 0 0 0-.294 0l-2.45 1.748a.25.25 0 0 1-.383-.277l.893-2.873a.25.25 0 0 0-.038-.282l-1.966-2.36a.25.25 0 0 1 .192-.41h3.932l1.214-3.766a.25.25 0 0 1 .476 0L11.534 7z"/>
+            </svg>
+            Conectando con la base de datos...
+        </div>
+        <div class="reviews-grid" id="reviewsList">
+            <!-- Las reseñas se inyectan aquí -->
+        </div>
+    </div>
+
+</section>
+
+<footer>
+    © 2026 GenesisRecarga - Tu tienda de confianza.
+</footer>
+
+<a class="whatsapp-bubble" href="https://wa.me/59177048918" target="_blank" rel="noopener noreferrer" title="Chat WhatsApp">💬</a>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Referencias al DOM
+    const reviewsList = document.getElementById('reviewsList');
+    const statusMessage = document.getElementById('statusMessage');
+    const searchInput = document.getElementById('searchInput');
+    
+    // Referencias del Formulario
+    const submitReviewBtn = document.getElementById('submitReview');
+    const reviewNameInput = document.getElementById('reviewName');
+    const reviewTextInput = document.getElementById('reviewText');
+    const formMessage = document.getElementById('formMessage');
+
+    // Base de datos (Reemplazar URL si es necesario)
+    const firebaseURL = 'https://pagina-4bb60-default-rtdb.firebaseio.com/RESEÑAS.json';
+    let reviewsGlobales = [];
+
+    // --- 1. CARGAR RESEÑAS DESDE FIREBASE ---
+    async function cargarResenas() {
+        try {
+            const response = await fetch(firebaseURL);
+            if (!response.ok) throw new Error('Error de lectura.');
+            
+            const data = await response.json();
+            
+            if (data) {
+                // Convertimos el objeto en Array y le asignamos el ID de Firebase
+                reviewsGlobales = Object.keys(data).map(key => ({ 
+                    id: key, 
+                    ...data[key] 
+                }));
+
+                // Opcional: Ordenar las reseñas de la más reciente a la más antigua
+                // Asumiendo que Firebase las devuelve en orden cronológico de inserción, invertimos el array.
+                reviewsGlobales.reverse();
+
+                renderizarResenas(reviewsGlobales);
+            } else {
+                mostrarMensajeVacio();
+            }
+        } catch (error) {
+            console.error("Error cargando reseñas:", error);
+            mostrarErrorBaseDatos();
+        }
+    }
+
+    // --- 2. RENDERIZAR LAS TARJETAS EN PANTALLA ---
+    function renderizarResenas(items) {
+        reviewsList.innerHTML = ''; // Limpiar grilla
+
+        if (items.length === 0) {
+            mostrarMensajeVacio();
+            return;
+        }
+
+        statusMessage.style.display = 'none'; // Ocultar mensaje de estado
+
+        items.forEach(item => {
+            const nombre = item.nombre || 'Gamer Anónimo';
+            const texto = item.texto || 'Sin comentarios.';
+            const fecha = item.fecha || 'Recientemente';
+            
+            // Generar estrellas visuales según el valor guardado (ej. "5", "4", "⭐️⭐️⭐️")
+            let valoracionNum = parseInt(item.valoracion);
+            if (isNaN(valoracionNum)) valoracionNum = 5; // Por defecto 5
+            
+            let estrellasHTML = '';
+            for(let i=1; i<=5; i++) {
+                estrellasHTML += (i <= valoracionNum) ? '★' : '☆';
+            }
+
+            // Crear el elemento HTML
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.innerHTML = `
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <h3>
+                            ${nombre}
+                            <span class="verified-badge" title="Compra Verificada">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/></svg>
+                            </span>
+                        </h3>
+                        <span class="review-date">${fecha}</span>
+                    </div>
+                    <div class="review-stars">${estrellasHTML}</div>
+                </div>
+                <div class="review-body">
+                    ${texto}
+                </div>
+            `;
+            reviewsList.appendChild(card);
+        });
+    }
+
+    // --- 3. FUNCIONES DE MENSAJES DE ESTADO ---
+    function mostrarMensajeVacio() {
+        statusMessage.style.display = 'block';
+        statusMessage.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" viewBox="0 0 16 16" style="margin: 0 auto 15px; opacity: 0.3; display:block;">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+            </svg>
+            Aún no hay reseñas registradas.<br>¡Anímate a ser el primero en calificar nuestro servicio!
+        `;
+    }
+
+    function mostrarErrorBaseDatos() {
+        statusMessage.style.display = 'block';
+        statusMessage.innerHTML = `Error de conexión con el servidor.<br>Mostrando reseñas de demostración.`;
+        
+        // Datos falsos por si Firebase falla o las reglas de lectura están cerradas
+        setTimeout(() => {
+            const demo = [
+                { nombre: "Carlos_FF", texto: "Excelente servicio, los diamantes me llegaron en menos de 5 minutos. 100% recomendado.", valoracion: "5", fecha: "Hoy" },
+                { nombre: "Maria G.", texto: "Compré el pase de Fortnite y todo perfecto. La atención por WhatsApp es muy amable.", valoracion: "5", fecha: "Ayer" },
+                { nombre: "GamerPro_21", texto: "Compré Robux, demoró un poco más de lo esperado pero llegaron completos. Buena página.", valoracion: "4", fecha: "Hace 2 días" }
+            ];
+            reviewsGlobales = demo;
+            renderizarResenas(reviewsGlobales);
+        }, 1500);
+    }
+
+    // --- 4. BUSCADOR EN TIEMPO REAL ---
+    searchInput.addEventListener('input', (e) => {
+        const termino = e.target.value.toLowerCase();
+        const filtrados = reviewsGlobales.filter(r => {
+            const nombre = (r.nombre || '').toLowerCase();
+            const texto = (r.texto || '').toLowerCase();
+            return nombre.includes(termino) || texto.includes(termino);
+        });
+        renderizarResenas(filtrados);
+    });
+
+    // --- 5. ENVIAR NUEVA RESEÑA A FIREBASE ---
+    submitReviewBtn.addEventListener('click', async () => {
+        const nombre = reviewNameInput.value.trim();
+        const texto = reviewTextInput.value.trim();
+        // Obtener el valor de la estrella seleccionada
+        const estrellas = document.querySelector('input[name="rating"]:checked').value;
+
+        // Validaciones básicas
+        if (!nombre || !texto) {
+            mostrarAlertaFormulario('Por favor completa tu nombre y escribe una reseña.', 'error');
+            return;
+        }
+
+        if (texto.length < 10) {
+            mostrarAlertaFormulario('Tu reseña es muy corta. Cuéntanos un poco más.', 'error');
+            return;
+        }
+
+        // Preparar UI para el envío
+        submitReviewBtn.disabled = true;
+        submitReviewBtn.textContent = 'Enviando...';
+        formMessage.style.display = 'none';
+
+        // Obtener fecha actual en formato legible (Ej: 21 de Junio, 2026)
+        const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+        const fechaFormateada = new Date().toLocaleDateString('es-BO', opcionesFecha);
+
+        const nuevaResena = {
+            nombre: nombre,
+            texto: texto,
+            valoracion: estrellas, // Guardamos el número (1 a 5)
+            fecha: fechaFormateada
+        };
+
+        try {
+            const response = await fetch(firebaseURL, {
+                method: 'POST', // Crear nuevo registro en Firebase
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nuevaResena)
+            });
+
+            if (!response.ok) throw new Error('Falló la inserción en BD.');
+
+            // Limpiar formulario al tener éxito
+            reviewNameInput.value = '';
+            reviewTextInput.value = '';
+            document.getElementById('star5').checked = true; // Resetear a 5 estrellas
+            
+            mostrarAlertaFormulario('¡Gracias! Tu reseña ha sido publicada.', 'success');
+            
+            // Recargar la lista para mostrar la nueva reseña de inmediato
+            cargarResenas();
+
+        } catch (error) {
+            console.error("Error al publicar:", error);
+            mostrarAlertaFormulario('Hubo un error al enviar tu reseña. Verifica tu conexión e intenta nuevamente.', 'error');
+        } finally {
+            // Restaurar botón sin importar el resultado
+            submitReviewBtn.disabled = false;
+            submitReviewBtn.textContent = 'Publicar Reseña';
+        }
+    });
+
+    function mostrarAlertaFormulario(mensaje, tipo) {
+        formMessage.textContent = mensaje;
+        formMessage.className = 'message-box'; // Resetear clases
+        if (tipo === 'error') {
+            formMessage.classList.add('message-error');
+        } else {
+            formMessage.classList.add('message-success');
+        }
+        formMessage.style.display = 'block';
+        
+        // Ocultar automáticamente después de 5 segundos
+        setTimeout(() => {
+            formMessage.style.display = 'none';
+        }, 5000);
+    }
+
+    // Iniciar
+    cargarResenas();
+});
+</script>
+</body>
+</html>
