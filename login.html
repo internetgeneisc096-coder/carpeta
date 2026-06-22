@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - GenesisRecarga</title>
+    <!-- Usamos una fuente moderna (Inter) desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variables de Color y Tema Moderno (Paleta Violeta/Cian) */
+        :root {
+            --bg-app: #0a0e17; /* Fondo principal muy oscuro */
+            --bg-panel: #121826; /* Fondo del panel derecho */
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            /* Gradiente principal para botones y acentos */
+            --accent-gradient: linear-gradient(135deg, #7f00ff 0%, #00d4ff 100%); 
+            --input-bg: #1a2236;
+            --input-border: #2d3748;
+            --input-focus: #7f00ff;
+            --font-family: 'Inter', sans-serif;
+        }
+
+        /* Reset y Estilos Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-app);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /*--- Layout Principal (Pantalla Dividida) ---*/
+        
+        /* Lado Izquierdo: El Formulario */
+        .login-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 100px 60px 40px 60px; /* Mayor padding superior (100px) para empujar todo hacia abajo */
+            max-width: 600px;
+            position: relative;
+        }
+
+        /* Enlace de "Volver" superior */
+        .back-link {
+            position: absolute;
+            top: 40px;
+            left: 60px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--text-primary); }
+
+        /* Cabecera del Formulario */
+        .login-header { 
+            margin-bottom: 30px; 
+            text-align: center; /* Centramos todo el contenedor */
+        }
+        .logo-text {
+            font-size: 2.2rem; 
+            font-weight: 700;
+            margin-bottom: 5px; /* Reducimos drásticamente el espacio entre el logo y el título */
+            letter-spacing: -0.5px;
+        }
+        
+        .title-container {
+             text-align: center; /* Alineamos el texto al medio (centro) */
+        }
+
+        .logo-highlight {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            color: transparent; 
+        }
+        .login-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Estilos del Formulario */
+        .form-group { margin-bottom: 24px; position: relative; }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        /* Iconos SVG dentro de los inputs */
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+        .form-input {
+            width: 100%;
+            padding: 16px 16px 16px 48px; /* Espacio a la izquierda para el icono */
+            background-color: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        .form-input::placeholder { color: #5a6a85; }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 4px rgba(127, 0, 255, 0.1); /* Halo al hacer foco */
+        }
+        
+        /* Botón de Ojo para la contraseña */
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        /* Opciones adicionales (Recordarme / Olvidé contraseña) */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        /* Checkbox personalizado */
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--input-border);
+            background: var(--input-bg);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        #rememberMe:checked + .custom-checkbox {
+            background: var(--accent-gradient);
+            border-color: transparent;
+        }
+        /* Ocultamos el checkbox nativo */
+        #rememberMe { display: none; } 
+        
+        .forgot-link {
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        .forgot-link:hover { opacity: 0.8; }
+
+        /* Botón Principal */
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: var(--accent-gradient);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px -5px rgba(127, 0, 255, 0.5);
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(127, 0, 255, 0.7);
+        }
+        .btn-login:active { transform: translateY(0); }
+
+        /* Mensajes de estado y notas */
+        .status-message {
+            margin-top: 20px;
+            font-weight: 600;
+            text-align: center;
+            min-height: 24px;
+        }
+        .status-error { color: #ff4757; }
+        .status-success { color: #2ed573; }
+
+        /*--- Lado Derecho: Panel Visual ---*/
+        .showcase-section {
+            flex: 1.4; /* Un poco más ancho que el formulario */
+            background-color: var(--bg-panel);
+            /* Imagen de fondo temática (gaming/streaming) */
+            background-image: linear-gradient(to right, var(--bg-panel) 10%, rgba(18, 24, 38, 0.6) 50%, rgba(127, 0, 255, 0.2) 100%), 
+                              url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Contenido alineado abajo */
+            padding: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efecto de brillo en el borde derecho */
+        .showcase-section::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            /* Un degradado radial sutil para dar profundidad */
+            background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.15), transparent 60%);
+            pointer-events: none;
+        }
+
+        .showcase-content {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+        }
+        .showcase-title {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+        .showcase-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        /* Lista de características con iconos */
+        .feature-list { list-style: none; }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00d4ff; /* Color cian para los iconos de la derecha */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            body { flex-direction: column; height: auto; }
+            .login-section, .showcase-section { flex: auto; width: 100%; padding: 40px 30px; }
+            .showcase-section { padding-bottom: 60px; min-height: 500px; justify-content: center;}
+            .back-link { top: 20px; left: 30px; }
+            .showcase-title { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sección Izquierda: Formulario de Login -->
+    <main class="login-section">
+        <!-- Enlace superior tipo "Volver" -->
+        <a href="index.html" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Volver al Inicio
+        </a>
+
+        <div class="login-header">
+            <!-- Logo centrado y con mayor espacio superior -->
+            <div class="logo-text">Genesis<span class="logo-highlight">Recarga</span></div>
+            
+            <!-- Contenedor del título a la izquierda -->
+            <div class="title-container">
+                <h1 class="login-title">PANEL DE MAYORISTA</h1>
+                <p class="login-subtitle">Ingresa tus credenciales para acceder al panel.</p>
+            </div>
+        </div>
+
+        <form id="loginForm">
+            <!-- Campo Usuario -->
+            <div class="form-group">
+                <label for="username" class="form-label">Usuario o Correo</label>
+                <div class="input-wrapper">
+                    <!-- Icono de Usuario SVG -->
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <input type="text" id="username" name="username" class="form-input" placeholder="Usuario" autocomplete="username" required>
+                </div>
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div class="form-group">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-wrapper">
+                    <!-- Icono de Candado SVG -->
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
+                    <!-- Botón para mostrar/ocultar contraseña -->
+                    <button type="button" class="toggle-password" id="togglePasswordBtn">
+                        <!-- Icono de Ojo SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn-login" type="submit">Iniciar Sesión</button>
+
+            <!-- Área de mensajes de estado -->
+            <div id="status" class="status-message" aria-live="polite"></div>
+        </form>
+    </main>
+
+    <!-- Sección Derecha: Panel Visual y Marketing -->
+    <aside class="showcase-section">
+        <div class="showcase-content">
+            <h2 class="showcase-title">ACCEDE A TU PANEL Y CONTROLA DE TUS VENTAS</h2>
+            <p class="showcase-text">Accede a un catálogo exclusivo de recargas, servicios de streaming y soporte premium para gamers exigentes.</p>
+
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <div class="feature-icon">
+                        <!-- Icono de Escudo -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    Transacciones 100% Seguras
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">
+                         <!-- Icono de Rayo -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    Entrega Inmediata de Códigos
+                </li>
+                 <li class="feature-item">
+                    <div class="feature-icon">
+                         <!-- Icono de Auriculares/Soporte -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                    </div>
+                    Soporte Especializado 24/7
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+<script>
+// Script para mostrar/ocultar contraseña
+const toggleBtn = document.getElementById('togglePasswordBtn');
+const passwordInput = document.getElementById('password');
+const eyeIcon = toggleBtn.innerHTML;
+// Icono de ojo tachado para cuando se muestra la contraseña
+const eyeOffIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+
+toggleBtn.addEventListener('click', function() {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.innerHTML = type === 'text' ? eyeOffIcon : eyeIcon;
+});
+
+// Script Lógico de Login
+document.getElementById('loginForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const userInput = document.getElementById('username');
+    const passInput = document.getElementById('password');
+    const user = userInput.value.trim();
+    const pass = passInput.value;
+    const status = document.getElementById('status');
+
+    // Limpiar estados previos
+    status.className = 'status-message';
+    userInput.style.borderColor = '';
+    passInput.style.borderColor = '';
+
+    if(!user || !pass){
+        status.textContent = 'Por favor, completa el usuario y la contraseña.';
+        status.classList.add('status-error');
+        if(!user) userInput.style.borderColor = '#ff4757';
+        if(!pass) passInput.style.borderColor = '#ff4757';
+        return; 
+    }
+
+    status.textContent = 'Verificando credenciales...';
+    status.style.color = 'var(--text-secondary)';
+
+    try{
+        const dbRoot = 'https://pagina-4bb60-default-rtdb.firebaseio.com';
+        
+        // BUSCAR EN LA RUTA PRINCIPAL DEL USUARIO EN FIREBASE
+        // Ejemplo: Consulta en https://pagina-4bb60-default-rtdb.firebaseio.com/LOGIN/JUAN.json
+        const url = `${dbRoot}/LOGIN/${encodeURIComponent(user)}.json`;
+
+        const resp = await fetch(url);
+        
+        if(!resp.ok){ 
+            throw new Error('Error de red o base de datos inaccesible');
+        }
+        
+        // Retorna el objeto del usuario (ej: { "CONTRASEÑA": "233222", "SALDO": 500 })
+        const userData = await resp.json();
+
+        // Verificamos si el usuario (nodo) existe en Firebase
+        if(userData === null){
+            status.textContent = 'Usuario no encontrado.';
+            status.classList.add('status-error');
+            userInput.style.borderColor = '#ff4757';
+            return;
+        }
+
+        // Verificamos si la propiedad CONTRASEÑA existe y si coincide con lo ingresado
+        // Convertimos ambas a String para evitar errores si la contraseña guardada es numérica (ej: 233222)
+        if(userData.CONTRASEÑA !== undefined && String(userData.CONTRASEÑA) === String(pass)){
+            status.textContent = '¡Acceso correcto! Redirigiendo...';
+            status.classList.add('status-success');
+            userInput.style.borderColor = '#2ed573';
+            passInput.style.borderColor = '#2ed573';
+
+            // Guardar sesión actual
+            try{ localStorage.setItem('gr_user', user); }catch(e){}
+            
+            setTimeout(()=> window.location.href = 'index.html', 1500);
+        } else {
+            status.textContent = 'Contraseña incorrecta.';
+            status.classList.add('status-error');
+            passInput.style.borderColor = '#ff4757';
+            passInput.value = ''; // Limpiar campo de contraseña por seguridad
+        }
+
+    }catch(err){
+        console.error(err);
+        status.textContent = 'Error de conexión. Intenta más tarde.';
+        status.classList.add('status-error');
+    }
+});
+</script>
+
+</body>
+</html>

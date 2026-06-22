@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenesisRecarga - Perfil</title>
+<style>
+    :root {
+        --bg-color: #0f111a;
+        --card-bg: #1e2130;
+        --primary-color: #00ffcc;
+        --primary-hover: #00ccaa;
+        --text-light: #f4f7ff;
+        --text-muted: #a0a5c0;
+        --accent-gradient: linear-gradient(135deg, #7f00ff 0%, #00d4ff 100%);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-light);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    header {
+        background-color: rgba(20, 22, 34, 0.95);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 5%;
+        max-width: 1400px;
+        margin: 0 auto;
+        flex-wrap: nowrap;
+        gap: 20px;
+    }A
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    .logo span { color: var(--primary-color); }
+
+    .menu {
+        display: flex;
+        gap: 20px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .menu a {
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+        white-space: nowrap;
+    }
+
+    .menu a:hover { color: var(--primary-color); }
+
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        white-space: nowrap;
+    }
+
+    .search {
+        background-color: #2a2e42;
+        border: 1px solid #3d4360;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        outline: none;
+        transition: border-color 0.3s;
+        width: 180px;
+    }
+
+    .search:focus {
+        border-color: var(--primary-color);
+        width: 220px;
+    }
+
+    .login-btn {
+        padding: 8px 14px;
+        border-radius: 20px;
+        color: #25D366;
+        font-weight: bold;
+        border: 1px solid rgba(37, 211, 102, 0.12);
+        background: transparent;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .user-menu {
+        display: none;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #0b151e;
+        padding: 6px 12px;
+        border-radius: 8px;
+        color: var(--primary-color);
+        font-weight: 500;
+        border: 1px solid #162a3c;
+    }
+
+    .user-icon { width: 20px; height: 20px; stroke: var(--primary-color); }
+    
+    .username-text {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .logout-btn {
+        background-color: transparent;
+        border: 1px solid #162a3c;
+        border-radius: 8px;
+        padding: 6px 10px;
+        color: #a0a5c0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .logout-btn:hover { background-color: #1a2236; color: #fff; border-color: #2d3748; }
+    .logout-icon { width: 20px; height: 20px; stroke: currentColor; }
+
+    .profile-container { 
+        max-width: 800px; 
+        margin: 60px auto; 
+        padding: 0 20px; 
+        flex: 1;
+        width: 100%;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .card { 
+        background: rgba(30, 33, 48, 0.6); 
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(0,255,204,0.2); 
+        border-radius: 22px; 
+        padding: 40px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5); 
+    }
+
+    .card h1 { 
+        font-size: clamp(2rem, 3vw, 2.8rem); 
+        margin-bottom: 10px; 
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .card p { color: var(--text-muted); margin-bottom: 30px; font-size: 1.1rem; line-height: 1.5; }
+
+    .profile-data { display: grid; gap: 20px; }
+    
+    .profile-item { display: grid; gap: 8px; }
+    .profile-item label { color: var(--text-muted); font-size: .95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+    .profile-item span { 
+        background: #141824; 
+        padding: 16px 20px; 
+        border-radius: 12px; 
+        border: 1px solid #2d3748; 
+        color: var(--text-light); 
+        font-size: 1.1rem; 
+        font-weight: 500;
+    }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 40px; }
+    
+    .btn { 
+        display: inline-flex; 
+        align-items: center; 
+        justify-content: center; 
+        padding: 14px 24px; 
+        border-radius: 12px; 
+        border: none; 
+        text-decoration: none; 
+        font-weight: 700; 
+        font-size: 1rem;
+        transition: transform .2s, box-shadow .2s; 
+        cursor: pointer;
+    }
+
+    .btn-primary { 
+        background: var(--accent-gradient); 
+        color: white; 
+        box-shadow: 0 4px 15px rgba(127, 0, 255, 0.3);
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(127, 0, 255, 0.5); }
+
+    .btn-secondary { 
+        background: transparent; 
+        color: var(--text-light); 
+        border: 1px solid #3d4360; 
+    }
+    .btn-secondary:hover { background: #2a2e42; border-color: var(--primary-color); transform: translateY(-3px); }
+
+    .status { 
+        margin-top: 24px; 
+        padding: 16px 20px; 
+        border-radius: 12px; 
+        background: rgba(255, 71, 87, 0.1); 
+        border: 1px solid rgba(255, 71, 87, 0.3); 
+        color: #ff4757; 
+        font-weight: 600;
+        text-align: center;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+        .navbar { flex-wrap: wrap; justify-content: center; }
+        .menu { order: 3; width: 100%; justify-content: center; }
+        .search { width: 100%; }
+        .nav-right { width: 100%; flex-direction: column; gap: 10px; margin-top: 10px;}
+        .user-menu { justify-content: center; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="navbar">
+        <div class="logo">Genesis<span>Recarga</span></div>
+        <nav class="menu">
+            <a href="index.html">Inicio</a>
+            <a href="catalogo.html">Catálogo</a>
+            <a href="streaming.html">Streaming</a>
+            <a href="reseñas.html">Reseñas</a>
+            <a href="soporte.html">Soporte</a>
+        </nav>
+        <div class="nav-right">
+         
+            
+            <a class="login-btn" id="loginBtn" href="login.html">Iniciar sesión</a>
+            
+            <div class="user-menu" id="userMenu">
+                <div class="user-profile">
+                    <svg class="user-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <!-- El nombre ahora es un enlace al perfil -->
+                    <a class="username-text" id="displayUsername" href="perfil.html">Usuario</a>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="Cerrar sesión">
+                    <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="card">
+        <h1>Perfil de usuario</h1>
+        <p>Accede a los datos de tu cuenta. Esta página solo está disponible si has iniciado sesión correctamente.</p>
+        <div class="profile-data">
+            <div class="profile-item">
+                <label>Usuario</label>
+                <span id="profileUsername">Cargando...</span>
+            </div>
+            <div class="profile-item">
+                <label>Estado</label>
+                <span id="profileStatus">Verificando sesión...</span>
+            </div>
+        </div>
+        <div class="actions">
+            <a href="index.html" class="btn btn-secondary">Volver a Inicio</a>
+            <button id="logoutProfile" class="btn btn-primary" type="button">Cerrar sesión</button>
+        </div>
+        <div id="profileMessage" class="status" style="display:none;"></div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // Elementos de la cabecera
+        const loginBtn = document.getElementById("loginBtn");
+        const userMenu = document.getElementById("userMenu");
+        const displayUsername = document.getElementById("displayUsername");
+        const logoutBtn = document.getElementById("logoutBtn");
+        
+        // Elementos del perfil
+        const profileUsername = document.getElementById('profileUsername');
+        const profileStatus = document.getElementById('profileStatus');
+        const profileMessage = document.getElementById('profileMessage');
+        const logoutProfile = document.getElementById('logoutProfile');
+        
+        // Verificamos si existe la sesión en localStorage
+        const storedUser = localStorage.getItem('gr_user');
+
+        // Lógica de Autenticación
+        if (!storedUser) {
+            // Si NO está logueado
+            
+            // Cabecera
+            loginBtn.style.display = "inline-flex";
+            userMenu.style.display = "none";
+            
+            // Perfil: Mostramos advertencia y redirigimos
+            profileUsername.textContent = 'No hay sesión activa';
+            profileUsername.style.color = '#ff4757';
+            profileStatus.textContent = 'Acceso Denegado';
+            profileStatus.style.color = '#ff4757';
+            
+            profileMessage.textContent = 'Para ver tu perfil debes iniciar sesión primero. Redirigiendo...';
+            profileMessage.style.display = 'block';
+            
+            // Redirigir al login después de 1.5 segundos
+            setTimeout(function() {
+                window.location.href = 'login.html';
+            }, 1500);
+            
+        } else {
+            // Si SÍ está logueado
+            
+            // Configurar Cabecera
+            loginBtn.style.display = "none";
+            userMenu.style.display = "flex";
+            let displayName = storedUser;
+            if (displayName.length > 12) {
+                 displayName = displayName.substring(0, 10) + "...";
+            }
+            displayUsername.textContent = displayName;
+            
+            // Configurar datos del Perfil
+            profileUsername.textContent = storedUser;
+            profileStatus.textContent = 'Activo / Verificado';
+            profileStatus.style.color = '#2ed573'; // Verde para éxito
+        }
+
+        // Funciones para cerrar sesión (Tanto en cabecera como en el botón del perfil)
+        function performLogout() {
+            localStorage.removeItem('gr_user');
+            // Opcional: También limpiar "Recordarme" si deseas forzar olvido completo al salir
+            // localStorage.removeItem('gr_user_remember'); 
+            window.location.href = 'login.html';
+        }
+
+        if(logoutBtn) logoutBtn.addEventListener('click', performLogout);
+        if(logoutProfile) logoutProfile.addEventListener('click', performLogout);
+    });
+</script>
+
+</body>
+</html>

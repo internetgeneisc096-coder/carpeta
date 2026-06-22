@@ -108,13 +108,78 @@
         width: 220px;
     }
 
-    .balance {
-        font-weight: bold;
+    .login-btn {
+        padding: 8px 14px;
+        border-radius: 20px;
         color: #25D366;
+        font-weight: bold;
+        border: 1px solid rgba(37, 211, 102, 0.12);
+        background: transparent;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* --- Estilos del Menú de Usuario Logueado --- */
+    .user-menu {
+        display: none; /* Oculto por defecto */
+        align-items: center;
+        gap: 10px;
+    }
+
+    .user-profile {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 10px;
+        background-color: #0b151e; /* Fondo oscuro sutil */
+        padding: 6px 12px;
+        border-radius: 8px;
+        color: var(--primary-color); /* Texto en cian */
+        font-weight: 500;
+        border: 1px solid #162a3c;
     }
+
+    .user-icon {
+        width: 20px;
+        height: 20px;
+        stroke: var(--primary-color);
+    }
+    
+    .username-text {
+        max-width: 100px; /* Limita el ancho del texto */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Agrega puntos suspensivos si es muy largo */
+        white-space: nowrap;
+        text-decoration: none;
+        color: var(--primary-color);
+    }
+
+    .logout-btn {
+        background-color: transparent;
+        border: 1px solid #162a3c;
+        border-radius: 8px;
+        padding: 6px 10px;
+        color: #a0a5c0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+        background-color: #1a2236;
+        color: #fff;
+        border-color: #2d3748;
+    }
+
+    .logout-icon {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
+    }
+
 
     /* Secciones */
     .section-title {
@@ -223,14 +288,14 @@
         border-radius: 8px;
         font-weight: bold;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: background-color 0.3s, opacity 0.3s;
         text-align: center;
         text-decoration: none;
         width: 100%;
         display: inline-block;
     }
 
-    .btn:hover {
+    .btn:hover:not(:disabled) {
         background-color: var(--primary-hover);
     }
 
@@ -304,7 +369,6 @@
         gap: 15px;
     }
 
-    /* Selector de Moneda Mini en el Encabezado */
     .currency-toggle-mini {
         display: flex;
         align-items: center;
@@ -374,7 +438,6 @@
         display: block;
     }
 
-    /* Estilos para la lista desplegable (Select) */
     .paquete-select {
         width: 100%;
         padding: 14px 15px;
@@ -386,7 +449,6 @@
         outline: none;
         appearance: none;
         cursor: pointer;
-        /* Ícono de flecha personalizado */
         background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300ffcc%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
         background-repeat: no-repeat;
         background-position: right 15px top 50%;
@@ -407,6 +469,31 @@
         font-weight: normal;
     }
 
+    /* Estilos para Input de ID */
+    .player-id-input {
+        width: 100%;
+        padding: 14px 15px;
+        background-color: #141622;
+        color: var(--primary-color);
+        font-weight: bold;
+        border: 1px solid #3d4360;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        outline: none;
+        transition: border-color 0.3s;
+        letter-spacing: 2px;
+    }
+    
+    .player-id-input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+        font-weight: normal;
+        letter-spacing: normal;
+    }
+
+    .player-id-input:focus {
+        border-color: var(--primary-color);
+    }
+
     .btn-whatsapp {
         background-color: #25D366;
         color: white;
@@ -417,11 +504,10 @@
         gap: 10px;
     }
 
-    .btn-whatsapp:hover {
+    .btn-whatsapp:hover:not(:disabled) {
         background-color: #1ebd5a;
     }
 
-    /* Nuevos estilos para el botón de instrucciones */
     .btn-secondary {
         background-color: #2a2e42;
         color: white;
@@ -445,7 +531,6 @@
         font-size: 0.95rem;
     }
 
-    /* Estado de Carga y Mensajes */
     .status-message {
         grid-column: 1 / -1;
         text-align: center;
@@ -458,7 +543,6 @@
         color: #ff6b6b;
     }
 
-    /* Footer y Botón Flotante */
     footer {
         text-align: center;
         padding: 2rem;
@@ -490,7 +574,6 @@
         transform: scale(1.1);
     }
 
-    /* Responsividad */
     @media (max-width: 768px) {
         .navbar {
             flex-direction: column;
@@ -516,7 +599,7 @@
     <div class="navbar">
         <div class="logo">Genesis<span>Recarga</span></div>
         <nav class="menu">
-            <a href="inicio.html">Inicio</a>
+            <a href="index.html">Inicio</a>
             <a href="catalogo.html">Catálogo</a>
             <a href="streaming.html">Streaming</a>
             <a href="reseñas.html">Reseñas</a>
@@ -524,7 +607,30 @@
         </nav>
         <div class="nav-right">
             <input class="search" type="text" id="searchInput" placeholder="Buscar juegos...">
-            <div class="balance">WhatsApp: +591-77048918</div>
+            
+            <!-- Botón de Iniciar Sesión por defecto -->
+            <a class="login-btn" id="loginBtn" href="login.html">Iniciar sesión</a>
+
+            <!-- Menú de Usuario (Oculto por defecto) -->
+            <div class="user-menu" id="userMenu">
+                <div class="user-profile">
+                    <!-- Icono de usuario simple -->
+                    <svg class="user-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <a class="username-text" id="displayUsername" href="perfil.html">Usuario</a>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="Cerrar sesión">
+                    <!-- Icono de cerrar sesión similar a la imagen -->
+                    <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+
         </div>
     </div>
 </header>
@@ -546,7 +652,6 @@
         <div class="modal-header">
             <h3 id="modal-title">Nombre del Juego</h3>
             <div class="header-right">
-                <!-- Selector de Moneda movido aquí -->
                 <div class="currency-toggle-mini">
                     <label title="Pagar en Bolivianos">
                         <input type="radio" name="moneda" value="Bs" checked> Bs-BOLIVIANO
@@ -559,15 +664,21 @@
             </div>
         </div>
         <div class="modal-body">
-            <!-- Imagen de precios (imagenprecio de Firebase) -->
             <img id="modal-img" class="modal-image" src="" alt="Precios del juego" onerror="this.style.display='none'">
             
-            <!-- Lista de precios dinámica (desplegable) -->
             <div id="modal-prices" class="price-list">
                 <!-- Se llena con JS -->
             </div>
 
-            <!-- Contenedor para alinear los botones -->
+            <!-- CONTENEDOR NUEVO: Solicitar ID de jugador (Oculto por defecto) -->
+            <div id="player-id-container" style="display: none;">
+                <label for="playerId" class="price-label-text" style="color: white; font-weight: bold; margin-bottom: 5px;">
+                    🎮 Ingresa tu ID de Jugador:
+                </label>
+                <input type="text" id="playerId" class="player-id-input" placeholder="Ejemplo: 123456789">
+
+            </div>
+
             <div class="modal-actions">
                 <button id="btn-instrucciones" class="btn btn-secondary" style="display: none;">
                     Instrucciones
@@ -606,26 +717,55 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // --- CONFIGURACIÓN USDT ---
-        let TIPO_CAMBIO_USDT = 9.96; // <-- Valor de respaldo inicial actualizado por si la web falla
+        
+        // --- LÓGICA DE MENÚ ACTIVO ---
+        let currentPage = window.location.pathname.split("/").pop();
+        if (!currentPage || currentPage === "") currentPage = "index.html"; 
+        
+        document.querySelectorAll(".menu a").forEach(link => {
+            if (link.getAttribute("href") === currentPage) {
+                link.style.color = "var(--primary-color)";
+            }
+        });
 
-        // Función para obtener el precio dinámico de USDT desde usdtbol.com
+        // --- LÓGICA DE SESIÓN (LOGIN) ---
+        const loginBtn = document.getElementById("loginBtn");
+        const userMenu = document.getElementById("userMenu");
+        const displayUsername = document.getElementById("displayUsername");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        const loggedUser = localStorage.getItem("gr_user");
+
+        if (loggedUser) {
+            loginBtn.style.display = "none";
+            userMenu.style.display = "flex";
+            let displayName = loggedUser;
+            if (displayName.length > 12) {
+                 displayName = displayName.substring(0, 10) + "...";
+            }
+            displayUsername.textContent = displayName;
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", function() {
+                localStorage.removeItem("gr_user");
+                window.location.reload();
+            });
+        }
+        // ---------------------------------
+
+        let TIPO_CAMBIO_USDT = 9.96; 
+
         async function obtenerPrecioUSDT() {
             try {
-                // Usamos un proxy CORS gratuito para evitar el bloqueo de seguridad del navegador
                 const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.usdtbol.com/')}`);
                 if (!response.ok) return;
                 
                 const data = await response.json();
                 const htmlString = data.contents;
-                
-                // Limpiamos etiquetas HTML para buscar en el texto puro
                 const textoPuro = htmlString.replace(/<[^>]+>/g, ' ');
                 
-                // Buscamos específicamente el patrón de la web: "ÚLTIMA COTIZACIÓN: Bs. 9.96"
                 let match = textoPuro.match(/ÚLTIMA COTIZACIÓN.*?Bs\.\s*(\d+\.\d+)/i);
-                
-                // Fallback: Si los administradores de la página cambian el texto "ÚLTIMA COTIZACIÓN", buscamos simplemente "Bs. 9.XX"
                 if (!match) {
                     match = textoPuro.match(/Bs\.\s*([7-9]\.\d{2}|1[0-5]\.\d{2})/i);
                 }
@@ -633,22 +773,17 @@
                 if (match && match[1]) {
                     TIPO_CAMBIO_USDT = parseFloat(match[1]);
                     console.log("✅ Precio USDT actualizado desde usdtbol.com: Bs.", TIPO_CAMBIO_USDT);
-                } else {
-                    console.log("⚠️ No se pudo extraer el precio, usando respaldo: Bs.", TIPO_CAMBIO_USDT);
                 }
             } catch (error) {
                 console.error("❌ Error al obtener precio USDT:", error);
             }
         }
-
-        // Llamamos a la actualización al cargar la web
         obtenerPrecioUSDT();
-        // ---------------------
 
         const catalogoContainer = document.getElementById('catalogo-container');
         const searchInput = document.getElementById('searchInput');
         
-        // Modal Elementos
+        // Elementos del Modal
         const modal = document.getElementById('compraModal');
         const closeModalBtn = document.getElementById('closeModal');
         const modalTitle = document.getElementById('modal-title');
@@ -658,7 +793,11 @@
         const btnInstrucciones = document.getElementById('btn-instrucciones');
         const radiosMoneda = document.querySelectorAll('input[name="moneda"]');
 
-        // Elementos del Modal de Instrucciones
+        // Elementos del Input de ID
+        const playerIdContainer = document.getElementById('player-id-container');
+        const playerIdInput = document.getElementById('playerId');
+
+        // Elementos de Instrucciones
         const instruccionesModal = document.getElementById('instruccionesModal');
         const closeInstruccionesBtn = document.getElementById('closeInstrucciones');
         const textoInstrucciones = document.getElementById('texto-instrucciones');
@@ -666,14 +805,13 @@
         const firebaseURL = "https://pagina-4bb60-default-rtdb.firebaseio.com/CATALOGO.json";
         let productosGlobales = [];
         let productoSeleccionadoActual = null;
-        let monedaSeleccionada = 'Bs'; // Por defecto es Bolivianos
+        let monedaSeleccionada = 'Bs'; 
 
-        // Actualizar moneda cuando el usuario cambia el radio button
         radiosMoneda.forEach(radio => {
             radio.addEventListener('change', (e) => {
                 monedaSeleccionada = e.target.value;
                 if (productoSeleccionadoActual) {
-                    renderizarOpcionesPaquete(); // Volver a dibujar la lista con el nuevo precio
+                    renderizarOpcionesPaquete();
                 }
             });
         });
@@ -721,7 +859,6 @@
                     textoPrecioCard = "Varios paquetes disponibles";
                 }
 
-                // Verificar si el producto está activo
                 const esActivo = producto.activo === true || String(producto.activo).toLowerCase() === 'true';
                 
                 let botonHTML = '';
@@ -748,6 +885,37 @@
             });
         }
 
+        // --- LÓGICA DEL INPUT DE ID ---
+        
+        // Bloquear letras, solo permitir números
+        playerIdInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, ''); // Remueve todo lo que NO sea dígito
+            validarEstadoBoton();
+        });
+
+        // Habilitar o deshabilitar botón de WhatsApp
+        function validarEstadoBoton() {
+            // Si el producto actual es Free Fire, requerimos que el ID tenga al menos 4 números
+            const esFreeFire = (productoSeleccionadoActual.id.toUpperCase() === 'FREEFIRE' || (productoSeleccionadoActual.nombre && productoSeleccionadoActual.nombre.toUpperCase().includes('FREE FIRE')));
+            
+            if (esFreeFire) {
+                if (playerIdInput.value.length > 3) {
+                    btnComprarWa.disabled = false;
+                    btnComprarWa.style.opacity = '1';
+                    btnComprarWa.style.cursor = 'pointer';
+                } else {
+                    btnComprarWa.disabled = true;
+                    btnComprarWa.style.opacity = '0.4';
+                    btnComprarWa.style.cursor = 'not-allowed';
+                }
+            } else {
+                // Si no es Free Fire, el botón siempre está habilitado
+                btnComprarWa.disabled = false;
+                btnComprarWa.style.opacity = '1';
+                btnComprarWa.style.cursor = 'pointer';
+            }
+        }
+
         // --- LÓGICA DEL MODAL ---
         
         catalogoContainer.addEventListener('click', (e) => {
@@ -765,26 +933,31 @@
             modalImg.style.display = 'block';
             modalImg.src = producto.imagenprecio || producto.imagen || "";
 
+            // Manejo del ID de Free Fire
+            const esFreeFire = (producto.id.toUpperCase() === 'FREEFIRE' || (producto.nombre && producto.nombre.toUpperCase().includes('FREE FIRE')));
+            if (esFreeFire) {
+                playerIdContainer.style.display = 'block';
+                playerIdInput.value = ''; // Limpiar el input al abrir
+            } else {
+                playerIdContainer.style.display = 'none';
+            }
+            
+            // Validamos inmediatamente para bloquear/desbloquear el botón
+            validarEstadoBoton();
+
             // Manejo del botón de instrucciones
             if (producto.instrucciones && producto.instrucciones.trim() !== "") {
                 btnInstrucciones.style.display = 'block';
-                
-                // Obtenemos el texto y procesamos los saltos de línea
                 let textoFinal = (producto.instrucciones || "").replace(/\\n/g, "\n");
-                
-                // Convertimos cualquier URL en un enlace clicable con color personalizado
                 const urlRegex = /(https?:\/\/[^\s"'<>]+)/g;
                 textoFinal = textoFinal.replace(urlRegex, function(url) {
                     return `<a href="${url}" target="_blank" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">${url}</a>`;
                 });
-                
-                // Mostramos el texto como HTML (cambiando los \n por <br>)
                 textoInstrucciones.innerHTML = textoFinal.replace(/\n/g, "<br>");
             } else {
                 btnInstrucciones.style.display = 'none';
             }
 
-            // Resetear el selector de moneda a Bs al abrir un nuevo cuadro
             document.querySelector('input[name="moneda"][value="Bs"]').checked = true;
             monedaSeleccionada = 'Bs';
 
@@ -815,9 +988,7 @@
                     select.innerHTML = '<option value="">No hay paquetes registrados</option>';
                     select.disabled = true;
                 } else {
-                    // ORDENAR PAQUETES: De menor cantidad a mayor cantidad numéricamente
                     opciones.sort((a, b) => {
-                        // Función interna para extraer el primer número del texto (ej: "1,000 V-Bucks" -> 1000)
                         const obtenerPrimerNumero = (texto) => {
                             const match = texto.replace(/,/g, '').match(/\d+/);
                             return match ? parseInt(match[0], 10) : 0;
@@ -826,11 +997,9 @@
                     });
 
                     opciones.forEach(([paquete, valorDB]) => {
-                        let precioMostrar = valorDB; // Por defecto el de la BD ("11 Bs")
+                        let precioMostrar = valorDB; 
                         
-                        // Si se eligió USDT, calculamos el precio
                         if (monedaSeleccionada === 'USDT') {
-                            // Extraer solo los números (ej. "11 Bs" -> 11)
                             const numeros = valorDB.replace(/,/g, '').match(/[\d.]+/);
                             if (numeros && numeros[0]) {
                                 const montoBs = parseFloat(numeros[0]);
@@ -877,13 +1046,21 @@
             const nombreJuego = productoSeleccionadoActual.nombre || productoSeleccionadoActual.id;
             const metodoPagoText = monedaSeleccionada === 'USDT' ? 'USDT (Binance)' : 'Bolivianos (Bs)';
             
-            const mensaje = `Hola GenesisRecarga, me interesa comprar una recarga para:\n\n🎮 *Juego:* ${nombreJuego}\n📦 *Paquete:* ${paqueteElegido}\n💳 *Método de pago:* ${metodoPagoText}\n\n¿Me indican los pasos para realizar el pago y el envío de mi ID?`;
+            let mensaje = `Hola GenesisRecarga, me interesa comprar una recarga para:\n\n🎮 *Juego:* ${nombreJuego}\n📦 *Paquete:* ${paqueteElegido}\n💳 *Método de pago:* ${metodoPagoText}`;
+            
+            // Si es Free Fire, agregamos el ID al mensaje de WhatsApp
+            const esFreeFire = (productoSeleccionadoActual.id.toUpperCase() === 'FREEFIRE' || (productoSeleccionadoActual.nombre && productoSeleccionadoActual.nombre.toUpperCase().includes('FREE FIRE')));
+            if (esFreeFire) {
+                mensaje += `\n🆔 *ID Jugador:* ${playerIdInput.value}`;
+            }
+
+            mensaje += `\n\n¿Me indican los pasos para realizar el pago?`;
             
             const linkWa = `https://wa.me/59177048918?text=${encodeURIComponent(mensaje)}`;
             window.open(linkWa, '_blank');
         });
 
-        // --- Eventos Modal Instrucciones ---
+        // --- Eventos Modales ---
         btnInstrucciones.addEventListener('click', () => {
             instruccionesModal.style.display = 'flex';
             setTimeout(() => instruccionesModal.classList.add('show'), 10);
@@ -896,7 +1073,6 @@
 
         closeInstruccionesBtn.addEventListener('click', cerrarInstruccionesModal);
 
-        // --- Cerrar modales generales ---
         function cerrarModal() {
             modal.classList.remove('show');
             setTimeout(() => modal.style.display = 'none', 300);
@@ -912,8 +1088,6 @@
         instruccionesModal.addEventListener('click', (e) => {
             if (e.target === instruccionesModal) cerrarInstruccionesModal();
         });
-
-        // --- UTILIDADES ---
 
         function mostrarMensaje(mensaje, esError) {
             catalogoContainer.innerHTML = `<div class="status-message ${esError ? 'error-text' : ''}">${mensaje}</div>`;

@@ -5,22 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GenesisRecarga - Streaming</title>
 <style>
-    /* Estilos copiados de catalogo.html */
+    /* Estilos copiados de catalogo.html y unificados */
     :root { --bg-color:#0f111a; --card-bg:#1e2130; --primary-color:#00ffcc; --primary-hover:#00ccaa; --text-light:#f0f0f0; --text-muted:#a0a5c0; }
     *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
     body{background-color:var(--bg-color);color:var(--text-light);display:flex;flex-direction:column;min-height:100vh}
+    
+    /* Header Unificado */
     header{background-color:rgba(20,22,34,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
     .navbar{display:flex;justify-content:space-between;align-items:center;padding:1rem 5%;max-width:1400px;margin:0 auto;flex-wrap:nowrap;gap:20px}
     .logo{font-size:1.8rem;font-weight:800;letter-spacing:1px;white-space:nowrap}
     .logo span{color:var(--primary-color)}
     .menu{display:flex;gap:20px;flex:1;justify-content:center}
-    .menu a{color:var(--text-light);text-decoration:none;font-weight:500;transition:color .3s;white-space:nowrap}
+    .menu a{color:var(--text-light);text-decoration:none;font-weight:500;transition:all 0.3s ease;white-space:nowrap;position:relative;padding-bottom:5px}
     .menu a:hover{color:var(--primary-color)}
+    
+    /* Resaltado de menú activo */
+    .menu a.active { color: var(--primary-color) !important; font-weight: 700; border-bottom: 2px solid var(--primary-color); }
+    
+    /* Lado Derecho Nav (Buscador y Usuario) */
     .nav-right{display:flex;align-items:center;gap:15px;white-space:nowrap}
     .search{background-color:#2a2e42;border:1px solid #3d4360;color:white;padding:8px 15px;border-radius:20px;outline:none;transition:border-color .3s;width:180px}
     .search::placeholder{color:rgba(255,255,255,.55)}
     .search:focus{border-color:var(--primary-color);width:220px}
-    .balance{font-weight:bold;color:#25D366;display:flex;align-items:center;gap:5px}
+    
+    .login-btn{padding:8px 14px;border-radius:20px;color:#25D366;font-weight:700;border:1px solid rgba(37,211,102,0.12);background:transparent;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+    
+    /* Menu Usuario Logueado */
+    .user-menu { display: none; align-items: center; gap: 10px; }
+    .user-profile { display: flex; align-items: center; gap: 10px; background-color: #0b151e; padding: 6px 12px; border-radius: 8px; color: var(--primary-color); font-weight: 500; border: 1px solid #162a3c; }
+    .user-icon { width: 20px; height: 20px; stroke: var(--primary-color); }
+    .username-text { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; color: var(--primary-color); }
+    .logout-btn { background-color: transparent; border: 1px solid #162a3c; border-radius: 8px; padding: 6px 10px; color: #a0a5c0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .logout-btn:hover { background-color: #1a2236; color: #fff; border-color: #2d3748; }
+    .logout-icon { width: 20px; height: 20px; stroke: currentColor; }
+
+    /* Contenido de Streaming */
     .section-title{text-align:center;padding:3rem 1rem 1rem}
     .section-title h2{font-size:2.5rem;margin-bottom:10px}
     .section-title p{color:var(--text-muted);max-width:600px;margin:0 auto}
@@ -38,6 +57,8 @@
     .btn{background-color:var(--primary-color);color:#000;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;transition:background-color .3s;text-align:center;text-decoration:none;width:100%;display:inline-block}
     .btn:hover{background-color:var(--primary-hover)}
     .btn-agotado{background-color:#2a2e42;color:#7a809c;cursor:not-allowed}
+    
+    /* Modales */
     .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:15px;opacity:0;transition:opacity .3s ease}
     .modal.show{display:flex;opacity:1}
     .modal-content{background-color:var(--card-bg);border-radius:15px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative;border:1px solid var(--primary-color);box-shadow:0 10px 30px rgba(0,255,204,.2);display:flex;flex-direction:column}
@@ -63,11 +84,18 @@
     .modal-actions{display:flex;gap:10px;margin-top:5px}
     .modal-actions .btn{flex:1;margin-top:0;font-size:.95rem}
     .status-message{grid-column:1 / -1;text-align:center;padding:2rem;color:var(--text-muted);font-size:1.2rem}
-    .error-text{color:#ff6b6b}
+    
     footer{text-align:center;padding:2rem;background-color:#141622;color:var(--text-muted);margin-top:auto}
     .whatsapp-bubble{position:fixed;bottom:30px;right:30px;background-color:#25D366;color:white;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 4px 15px rgba(37,211,102,.4);text-decoration:none;transition:transform .3s;z-index:1000}
     .whatsapp-bubble:hover{transform:scale(1.1)}
-    @media (max-width:768px){.navbar{flex-direction:column;text-align:center}.nav-right{width:100%;flex-direction:column}.search{width:100%}.header-right{width:100%;justify-content:space-between}}
+    
+    @media (max-width:900px){
+        .navbar{flex-wrap:wrap;justify-content:center}
+        .menu{order:3;width:100%;justify-content:center;margin-top:15px}
+        .nav-right{width:100%;flex-direction:column;gap:10px;margin-top:10px}
+        .search{width:100%}
+        .user-menu{justify-content:center}
+    }
 </style>
 </head>
 <body>
@@ -76,7 +104,7 @@
     <div class="navbar">
         <div class="logo">Genesis<span>Recarga</span></div>
         <nav class="menu">
-            <a href="inicio.html">Inicio</a>
+            <a href="index.html">Inicio</a>
             <a href="catalogo.html">Catálogo</a>
             <a href="streaming.html">Streaming</a>
             <a href="reseñas.html">Reseñas</a>
@@ -84,7 +112,25 @@
         </nav>
         <div class="nav-right">
             <input class="search" type="text" id="searchInput" placeholder="Buscar...">
-            <div class="balance">WhatsApp: +591-77048918</div>
+            
+            <a class="login-btn" id="loginBtn" href="login.html">Iniciar sesión</a>
+            
+            <div class="user-menu" id="userMenu">
+                <div class="user-profile">
+                    <svg class="user-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <a class="username-text" id="displayUsername" href="perfil.html">Usuario</a>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="Cerrar sesión">
+                    <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </header>
@@ -142,6 +188,43 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
+    
+    // --- LÓGICA DE MENÚ ACTIVO (RESALTADO) ---
+    let currentPage = window.location.pathname.split("/").pop();
+    if (!currentPage || currentPage === "") currentPage = "index.html"; 
+    
+    document.querySelectorAll(".menu a").forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+            link.classList.add("active");
+        }
+    });
+
+    // --- LÓGICA DE SESIÓN (LOGIN) ---
+    const loginBtn = document.getElementById("loginBtn");
+    const userMenu = document.getElementById("userMenu");
+    const displayUsername = document.getElementById("displayUsername");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const loggedUser = localStorage.getItem("gr_user");
+
+    if (loggedUser) {
+        loginBtn.style.display = "none";
+        userMenu.style.display = "flex";
+        let displayName = loggedUser;
+        if (displayName.length > 12) {
+             displayName = displayName.substring(0, 10) + "...";
+        }
+        displayUsername.textContent = displayName;
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", function() {
+            localStorage.removeItem("gr_user");
+            window.location.reload();
+        });
+    }
+
+    // --- LÓGICA DE STREAMING ---
     let TIPO_CAMBIO_USDT = 9.96;
     async function obtenerPrecioUSDT(){ 
         try{ 
@@ -187,7 +270,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }catch(err){ console.error('Error al cargar STREAMING:',err); streamingContainer.innerHTML = '<div class="status-message">Error al conectar. Mostrando ejemplos.</div>'; usarDatosDeEjemplo(); }
     }
 
-    // ARREGLO PARA EL [object Object]
     function renderizarItems(items){ 
         streamingContainer.innerHTML = ''; 
         if(items.length===0){ 
@@ -202,7 +284,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
             const esActivo = item.activo===true || String(item.activo).toLowerCase()==='true'; 
             const botonHTML = esActivo ? `<button class="btn btn-abrir-modal" data-id="${item.id}">Comprar ${nombre}</button>` : `<button class="btn btn-agotado" disabled>Agotado</button>`; 
             
-            // Evaluamos el tipo de precio para que no salga [object Object] en la tarjeta
             let textoPrecioCard = "Ver opciones";
             if (typeof item.precio === 'string') {
                 textoPrecioCard = item.precio;

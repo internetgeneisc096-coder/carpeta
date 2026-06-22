@@ -86,13 +86,24 @@ header {
     width: 220px;
     }
 
-    .balance {
-    background: #142338;
-    padding: 12px 18px;
-    border-radius: 12px;
+    .login-btn {
+    padding: 8px 14px;
+    border-radius: 20px;
     color: #7bf2b6;
     font-weight: 700;
     border: 1px solid rgba(123, 242, 182, 0.2);
+    background: transparent;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+.login-btn:hover {
+    transform: translateY(-3px);
+    background-color: rgba(255,255,255,0.03);
+    border-color: rgba(123, 242, 182, 0.35);
 }
 
 /* NUEVO BLOQUE HERO */

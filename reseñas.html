@@ -102,13 +102,76 @@
         color: rgba(255, 255, 255, 0.55);
     }
 
-    .balance {
-        background: #142338;
-        padding: 12px 18px;
-        border-radius: 12px;
+    .login-btn {
+        padding: 8px 14px;
+        border-radius: 20px;
         color: #7bf2b6;
         font-weight: 700;
         border: 1px solid rgba(123, 242, 182, 0.2);
+        background: transparent;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* --- Estilos del Menú de Usuario Logueado --- */
+    .user-menu {
+        display: none; /* Oculto por defecto */
+        align-items: center;
+        gap: 10px;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #0b151e; /* Fondo oscuro sutil */
+        padding: 6px 12px;
+        border-radius: 8px;
+        color: var(--primary-color); /* Texto en cian */
+        font-weight: 500;
+        border: 1px solid #162a3c;
+    }
+
+    .user-icon {
+        width: 20px;
+        height: 20px;
+        stroke: var(--primary-color);
+    }
+    
+    .username-text {
+        max-width: 100px; /* Limita el ancho del texto */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Agrega puntos suspensivos si es muy largo */
+        white-space: nowrap;
+        text-decoration: none;
+        color: var(--primary-color);
+    }
+
+    .logout-btn {
+        background-color: transparent;
+        border: 1px solid #162a3c;
+        border-radius: 8px;
+        padding: 6px 10px;
+        color: #a0a5c0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+        background-color: #1a2236;
+        color: #fff;
+        border-color: #2d3748;
+    }
+
+    .logout-icon {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
     }
 
     /* Encabezado de la página */
@@ -402,7 +465,7 @@
     <div class="navbar">
         <div class="logo">Genesis<span>Recarga</span></div>
         <nav class="menu">
-            <a href="inicio.html">Inicio</a>
+            <a href="index.html">Inicio</a>
             <a href="catalogo.html">Catálogo</a>
             <a href="streaming.html">Streaming</a>
             <a href="reseñas.html" style="color: var(--primary-color);">Reseñas</a>
@@ -410,7 +473,29 @@
         </nav>
         <div class="nav-right">
             <input class="search" type="text" id="searchInput" placeholder="Buscar en reseñas...">
-            <div class="balance">WhatsApp: +591-77048918</div>
+            
+            <!-- Botón de Iniciar Sesión por defecto -->
+            <a class="login-btn" id="loginBtn" href="login.html">Iniciar sesión</a>
+
+            <!-- Menú de Usuario (Oculto por defecto) -->
+            <div class="user-menu" id="userMenu">
+                <div class="user-profile">
+                    <!-- Icono de usuario simple -->
+                    <svg class="user-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <a class="username-text" id="displayUsername" href="perfil.html">Usuario</a>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="Cerrar sesión">
+                    <!-- Icono de cerrar sesión similar a la imagen -->
+                    <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </header>
@@ -481,6 +566,35 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- LÓGICA DE SESIÓN (LOGIN) ---
+    const loginBtn = document.getElementById("loginBtn");
+    const userMenu = document.getElementById("userMenu");
+    const displayUsername = document.getElementById("displayUsername");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const loggedUser = localStorage.getItem("gr_user");
+
+    if (loggedUser) {
+        loginBtn.style.display = "none";
+        userMenu.style.display = "flex";
+        let displayName = loggedUser;
+        if (displayName.length > 12) {
+             displayName = displayName.substring(0, 10) + "...";
+        }
+        displayUsername.textContent = displayName;
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", function() {
+            localStorage.removeItem("gr_user");
+            window.location.reload();
+        });
+    }
+    // ---------------------------------
+
+
+    // --- LÓGICA DE RESEÑAS ---
     // Referencias al DOM
     const reviewsList = document.getElementById('reviewsList');
     const statusMessage = document.getElementById('statusMessage');
@@ -603,15 +717,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 4. BUSCADOR EN TIEMPO REAL ---
-    searchInput.addEventListener('input', (e) => {
-        const termino = e.target.value.toLowerCase();
-        const filtrados = reviewsGlobales.filter(r => {
-            const nombre = (r.nombre || '').toLowerCase();
-            const texto = (r.texto || '').toLowerCase();
-            return nombre.includes(termino) || texto.includes(termino);
+    if(searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const termino = e.target.value.toLowerCase();
+            const filtrados = reviewsGlobales.filter(r => {
+                const nombre = (r.nombre || '').toLowerCase();
+                const texto = (r.texto || '').toLowerCase();
+                return nombre.includes(termino) || texto.includes(termino);
+            });
+            renderizarResenas(filtrados);
         });
-        renderizarResenas(filtrados);
-    });
+    }
 
     // --- 5. ENVIAR NUEVA RESEÑA A FIREBASE ---
     submitReviewBtn.addEventListener('click', async () => {

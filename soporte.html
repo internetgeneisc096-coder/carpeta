@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GenesisRecarga - Soporte</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="header.css">
 </head>
 <body>
 <header>
@@ -18,8 +19,24 @@
             <a href="soporte.html">Soporte</a>
         </nav>
         <div class="nav-right">
-            <input class="search" type="text" placeholder="Buscar juegos...">
-            <div class="balance">WhatsApp: +591-77048918</div>
+    
+            <a class="login-btn" id="loginBtn" href="login.html">Iniciar sesión</a>
+            <div class="user-menu" id="userMenu">
+                <div class="user-profile">
+                    <svg class="user-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <a class="username-text" id="displayUsername" href="perfil.html">Usuario</a>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="Cerrar sesión">
+                    <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </header>
@@ -54,7 +71,7 @@
 <footer>
     © 2026 GenesisRecarga - Recargas para Freefire, Fortnite y Roblox.
 </footer>
-
+<script src="header.js"></script>
 <a class="whatsapp-bubble" href="https://wa.me/59177048918" target="_blank" rel="noopener noreferrer" title="Chat WhatsApp">
     <span>💬</span>
 </a>
