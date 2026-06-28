@@ -1140,7 +1140,7 @@
             }, 1000);
         }
 
-        searchInput.addEventListener('input', (e) => {
+              searchInput.addEventListener('input', (e) => {
             const termino = e.target.value.toLowerCase();
             const filtrados = productosGlobales.filter(prod => {
                 const nombre = (prod.nombre || prod.id).toLowerCase();
@@ -1150,7 +1150,30 @@
             renderizarProductos(filtrados);
         });
 
-        cargarCatalogo();
+        // ============================
+        // ABRIR PRODUCTO DESDE LA URL
+        // ============================
+        function abrirProductoDesdeURL() {
+
+            const params = new URLSearchParams(window.location.search);
+
+            const juego = params.get("juego");
+
+            if (!juego) return;
+
+            const producto = productosGlobales.find(p =>
+                p.id.toUpperCase() === juego.toUpperCase()
+            );
+
+            if (producto) {
+                abrirModal(producto);
+            }
+        }
+
+        cargarCatalogo().then(() => {
+            abrirProductoDesdeURL();
+        });
+
     });
 </script>
 </body>
