@@ -180,7 +180,6 @@
         stroke: currentColor;
     }
 
-
     /* Secciones */
     .section-title {
         text-align: center;
@@ -436,6 +435,7 @@
         font-size: 0.95rem;
         margin-bottom: 8px;
         display: block;
+        transition: color 0.3s;
     }
 
     .paquete-select {
@@ -630,7 +630,6 @@
                     </svg>
                 </button>
             </div>
-
         </div>
     </div>
 </header>
@@ -816,6 +815,49 @@
             });
         });
 
+        // FUNCIÓN NUEVA: Verificar la URL para abrir un producto automáticamente
+        function verificarUrlYabrirModal() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let juegoIdParam = urlParams.get('juego'); 
+            let instruccionesParam = urlParams.get('instrucciones'); // NUEVO PARAMETRO
+            
+            if (instruccionesParam) {
+                // Validación para reemplazar automáticamente el guion bajo "_" por espacio " " 
+                instruccionesParam = instruccionesParam.replace(/_/g, ' ');
+                
+                // Buscamos el juego cuyo ID coincida con el de la URL
+                const productoEncontrado = productosGlobales.find(p => p.id.toUpperCase() === instruccionesParam.toUpperCase());
+                
+                if (productoEncontrado) {
+                    // Solo abrimos si realmente tiene instrucciones
+                    if (productoEncontrado.instrucciones && productoEncontrado.instrucciones.trim() !== "") {
+                        abrirModal(productoEncontrado);
+                        // Mostrar las instrucciones automáticamente un poquito después de que cargue el modal principal
+                        setTimeout(() => {
+                            instruccionesModal.style.display = 'flex';
+                            setTimeout(() => instruccionesModal.classList.add('show'), 10);
+                        }, 400); 
+                    } else {
+                        // Si no tiene instrucciones, no hacemos nada, nos quedamos en el catálogo
+                        console.warn("El juego no tiene instrucciones asignadas. Permaneciendo en catálogo.");
+                    }
+                } else {
+                    console.warn("Juego desde URL para instrucciones no encontrado: ", instruccionesParam);
+                }
+            } else if (juegoIdParam) {
+                // Lógica de apertura normal del producto sin abrir instrucciones automáticamente
+                juegoIdParam = juegoIdParam.replace(/_/g, ' ');
+                
+                const productoEncontrado = productosGlobales.find(p => p.id.toUpperCase() === juegoIdParam.toUpperCase());
+                
+                if (productoEncontrado) {
+                    abrirModal(productoEncontrado);
+                } else {
+                    console.warn("Juego desde URL no encontrado: ", juegoIdParam);
+                }
+            }
+        }
+
         async function cargarCatalogo() {
             try {
                 const respuesta = await fetch(firebaseURL);
@@ -828,6 +870,9 @@
                         ...datos[key]
                     }));
                     renderizarProductos(productosGlobales);
+                    
+                    // Llamamos a la función para ver si venimos de un link directo
+                    verificarUrlYabrirModal();
                 } else {
                     mostrarMensaje("El catálogo está vacío actualmente.", false);
                     usarDatosDeEjemplo();
@@ -895,8 +940,7 @@
 
         // Habilitar o deshabilitar botón de WhatsApp
         function validarEstadoBoton() {
-            // Si el producto actual es Free Fire, requerimos que el ID tenga al menos 4 números
-            const esFreeFire = (productoSeleccionadoActual.id.toUpperCase() === 'FREEFIRE' || (productoSeleccionadoActual.nombre && productoSeleccionadoActual.nombre.toUpperCase().includes('FREE FIRE')));
+            const esFreeFire = (productoSeleccionadoActual.id.toUpperCase() === 'FREEFIRE' || productoSeleccionadoActual.id.toUpperCase() === 'FREE_FIRE' || (productoSeleccionadoActual.nombre && productoSeleccionadoActual.nombre.toUpperCase().includes('FREE FIRE')));
             
             if (esFreeFire) {
                 if (playerIdInput.value.length > 3) {
@@ -934,7 +978,7 @@
             modalImg.src = producto.imagenprecio || producto.imagen || "";
 
             // Manejo del ID de Free Fire
-            const esFreeFire = (producto.id.toUpperCase() === 'FREEFIRE' || (producto.nombre && producto.nombre.toUpperCase().includes('FREE FIRE')));
+            const esFreeFire = (producto.id.toUpperCase() === 'FREEFIRE' || producto.id.toUpperCase() === 'FREE_FIRE' || (producto.nombre && producto.nombre.toUpperCase().includes('FREE FIRE')));
             if (esFreeFire) {
                 playerIdContainer.style.display = 'block';
                 playerIdInput.value = ''; // Limpiar el input al abrir
@@ -974,6 +1018,7 @@
 
             const labelSelect = document.createElement('label');
             labelSelect.className = 'price-label-text';
+            labelSelect.id = 'labelPaquetes';
             labelSelect.textContent = 'Selecciona tu paquete de recarga:';
             modalPrices.appendChild(labelSelect);
 
@@ -1037,8 +1082,21 @@
         btnComprarWa.addEventListener('click', () => {
             const selectElement = document.getElementById('paqueteSelect');
             
+            // Validacion visual en lugar de alert()
             if (!selectElement || !selectElement.value || selectElement.disabled) {
-                alert("Por favor, selecciona un paquete válido.");
+                selectElement.style.borderColor = '#ff6b6b';
+                const label = document.getElementById('labelPaquetes');
+                const originalText = 'Selecciona tu paquete de recarga:';
+                
+                label.textContent = "¡Por favor, selecciona un paquete válido!";
+                label.style.color = "#ff6b6b";
+                
+                setTimeout(() => {
+                    selectElement.style.borderColor = '#3d4360';
+                    label.textContent = originalText;
+                    label.style.color = "var(--text-muted)";
+                }, 3000);
+                
                 return;
             }
 
@@ -1049,7 +1107,7 @@
             let mensaje = `Hola GenesisRecarga, me interesa comprar una recarga para:\n\n🎮 *Juego:* ${nombreJuego}\n📦 *Paquete:* ${paqueteElegido}\n💳 *Método de pago:* ${metodoPagoText}`;
             
             // Si es Free Fire, agregamos el ID al mensaje de WhatsApp
-            const esFreeFire = (productoSeleccionadoActual.id.toUpperCase() === 'FREEFIRE' || (productoSeleccionadoActual.nombre && productoSeleccionadoActual.nombre.toUpperCase().includes('FREE FIRE')));
+            const esFreeFire = (productoSeleccionadoActual.id.toUpperCase() === 'FREEFIRE' || productoSeleccionadoActual.id.toUpperCase() === 'FREE_FIRE' || (productoSeleccionadoActual.nombre && productoSeleccionadoActual.nombre.toUpperCase().includes('FREE FIRE')));
             if (esFreeFire) {
                 mensaje += `\n🆔 *ID Jugador:* ${playerIdInput.value}`;
             }
@@ -1069,6 +1127,13 @@
         function cerrarInstruccionesModal() {
             instruccionesModal.classList.remove('show');
             setTimeout(() => instruccionesModal.style.display = 'none', 300);
+            
+            // Si se cierran las instrucciones que fueron abiertas por URL, limpiamos la URL
+            const url = new URL(window.location);
+            if (url.searchParams.has('instrucciones')) {
+                url.searchParams.delete('instrucciones');
+                window.history.replaceState({}, '', url);
+            }
         }
 
         closeInstruccionesBtn.addEventListener('click', cerrarInstruccionesModal);
@@ -1076,6 +1141,25 @@
         function cerrarModal() {
             modal.classList.remove('show');
             setTimeout(() => modal.style.display = 'none', 300);
+            
+            // Limpiamos los parámetros de la URL para que no se abra otra vez al recargar la página 
+            // si el usuario cerró el modal manualmente.
+            const url = new URL(window.location);
+            let urlCambiada = false;
+            
+            if (url.searchParams.has('juego')) {
+                url.searchParams.delete('juego');
+                urlCambiada = true;
+            }
+            if (url.searchParams.has('instrucciones')) {
+                url.searchParams.delete('instrucciones');
+                urlCambiada = true;
+            }
+            
+            if (urlCambiada) {
+                window.history.replaceState({}, '', url);
+            }
+            
             productoSeleccionadoActual = null;
         }
 
@@ -1097,7 +1181,7 @@
             setTimeout(() => {
                 const datosEjemplo = [
                     {
-                        id: "FREEFIRE",
+                        id: "FREE FIRE", // Ajustado para ser como en Firebase (con espacio)
                         nombre: "FREE FIRE",
                         descripcion: "LA RECARGA se REALIZA SOLO POR ID",
                         imagen: "https://raw.githubusercontent.com/internetgeneisc096-coder/carpeta/main/freefire.jpg",
@@ -1110,15 +1194,16 @@
                         }
                     },
                     {
-                        id: "FORTNITE",
-                        nombre: "Fortnite",
-                        descripcion: "V-Bucks instantáneos para tus bailes y pases.",
-                        imagen: "https://i.imgur.com/71ZnLhB.png",
-                        imagenprecio: "https://i.imgur.com/71ZnLhB.png",
-                        activo: false, 
+                        id: "TIKTOK",
+                        nombre: "TIKTOK",
+                        descripcion: "Monedas oficiales de TikTok directo a tu cuenta.",
+                        imagen: "https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=500&q=80",
+                        imagenprecio: "https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=500&q=80",
+                        activo: true, 
+                        instrucciones: "1.- DEBES INGRESAR A TU CUENTA TIKTOK\n2.- IR A SU PERFIL\n3.- IR A LA 3 RALLITA DE SU TIKTOK\n4.- IR A TU CODIGO QR\n5.- HACER CLICK ARRIBA EN LA PARTE SUPERIOR\n6.- BUSCAR EL QR EN GALERIA\n7.- OBLIGATORIO DAR PERMISO PARA REALIZAR LA RECARGA\n8.- *IMPORTANTE* EL CODIGO \"QR\" SOLO DURA 40 SEG  DEBE DE BUSCARLO RAPIDO\n9.- VER VIDEO\nhttps://www.youtube.com/shorts/m2UiIE5LYJo",
                         precio: {
-                            "1,000 V-Bucks": "60 Bs",
-                            "2,800 V-Bucks": "150 Bs"
+                            "70 Monedas": "15 Bs",
+                            "350 Monedas": "70 Bs"
                         }
                     },
                     {
@@ -1137,10 +1222,11 @@
                 ];
                 productosGlobales = datosEjemplo;
                 renderizarProductos(productosGlobales);
+                verificarUrlYabrirModal(); // Llamamos aquí también en caso de usar datos locales
             }, 1000);
         }
 
-              searchInput.addEventListener('input', (e) => {
+        searchInput.addEventListener('input', (e) => {
             const termino = e.target.value.toLowerCase();
             const filtrados = productosGlobales.filter(prod => {
                 const nombre = (prod.nombre || prod.id).toLowerCase();
@@ -1150,30 +1236,7 @@
             renderizarProductos(filtrados);
         });
 
-        // ============================
-        // ABRIR PRODUCTO DESDE LA URL
-        // ============================
-        function abrirProductoDesdeURL() {
-
-            const params = new URLSearchParams(window.location.search);
-
-            const juego = params.get("juego");
-
-            if (!juego) return;
-
-            const producto = productosGlobales.find(p =>
-                p.id.toUpperCase() === juego.toUpperCase()
-            );
-
-            if (producto) {
-                abrirModal(producto);
-            }
-        }
-
-        cargarCatalogo().then(() => {
-            abrirProductoDesdeURL();
-        });
-
+        cargarCatalogo();
     });
 </script>
 </body>

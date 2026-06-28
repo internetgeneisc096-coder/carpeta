@@ -260,14 +260,62 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     radiosMoneda.forEach(radio=>radio.addEventListener('change', (e)=>{ monedaSeleccionada = e.target.value; if(itemSeleccionadoActual) renderizarOpcionesPaquete(); }));
 
+    // FUNCIÓN NUEVA: Verificar la URL para abrir un producto o instrucciones automáticamente
+    function verificarUrlYabrirModal() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let streamingIdParam = urlParams.get('streaming'); 
+        let instruccionesParam = urlParams.get('instrucciones');
+        
+        if (instruccionesParam) {
+            // Reemplazar automáticamente el guion bajo "_" por espacio " "
+            instruccionesParam = instruccionesParam.replace(/_/g, ' ');
+            
+            const productoEncontrado = itemsGlobales.find(p => p.id.toUpperCase() === instruccionesParam.toUpperCase());
+            
+            if (productoEncontrado) {
+                // Solo abrimos si realmente tiene instrucciones
+                if (productoEncontrado.instrucciones && productoEncontrado.instrucciones.trim() !== "") {
+                    abrirModal(productoEncontrado);
+                    // Mostrar las instrucciones automáticamente un poco después
+                    setTimeout(() => {
+                        instruccionesModal.style.display = 'flex';
+                        setTimeout(() => instruccionesModal.classList.add('show'), 10);
+                    }, 400); 
+                } else {
+                    console.warn("El producto no tiene instrucciones asignadas. Permaneciendo en catálogo.");
+                }
+            } else {
+                console.warn("Producto desde URL para instrucciones no encontrado: ", instruccionesParam);
+            }
+        } else if (streamingIdParam) {
+            streamingIdParam = streamingIdParam.replace(/_/g, ' ');
+            
+            const productoEncontrado = itemsGlobales.find(p => p.id.toUpperCase() === streamingIdParam.toUpperCase());
+            
+            if (productoEncontrado) {
+                abrirModal(productoEncontrado);
+            } else {
+                console.warn("Producto desde URL no encontrado: ", streamingIdParam);
+            }
+        }
+    }
+
     async function cargarStreaming(){
         try{
             const respuesta = await fetch(firebaseURL);
             if(!respuesta.ok) throw new Error('No se pudo leer la base de datos.');
             const datos = await respuesta.json();
-            if(datos){ itemsGlobales = Object.keys(datos).map(key=>({ id:key, ...datos[key]})); renderizarItems(itemsGlobales); }
+            if(datos){ 
+                itemsGlobales = Object.keys(datos).map(key=>({ id:key, ...datos[key]})); 
+                renderizarItems(itemsGlobales); 
+                verificarUrlYabrirModal(); // Se llama después de renderizar para abrir el modal si hay link
+            }
             else streamingContainer.innerHTML = '<div class="status-message">El streaming está vacío actualmente.</div>';
-        }catch(err){ console.error('Error al cargar STREAMING:',err); streamingContainer.innerHTML = '<div class="status-message">Error al conectar. Mostrando ejemplos.</div>'; usarDatosDeEjemplo(); }
+        }catch(err){ 
+            console.error('Error al cargar STREAMING:',err); 
+            streamingContainer.innerHTML = '<div class="status-message">Error al conectar. Mostrando ejemplos.</div>'; 
+            usarDatosDeEjemplo(); 
+        }
     }
 
     function renderizarItems(items){ 
@@ -402,6 +450,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     function cerrarInstruccionesModal(){ 
         instruccionesModal.classList.remove('show'); 
         setTimeout(()=>instruccionesModal.style.display='none',300); 
+        
+        // Limpiamos la URL si se cierran las instrucciones
+        const url = new URL(window.location);
+        if (url.searchParams.has('instrucciones')) {
+            url.searchParams.delete('instrucciones');
+            window.history.replaceState({}, '', url);
+        }
     }
     
     closeInstruccionesBtn.addEventListener('click', cerrarInstruccionesModal);
@@ -409,6 +464,24 @@ document.addEventListener('DOMContentLoaded', ()=>{
     function cerrarModal(){ 
         modal.classList.remove('show'); 
         setTimeout(()=>modal.style.display='none',300); 
+        
+        // Limpiamos los parámetros de la URL
+        const url = new URL(window.location);
+        let urlCambiada = false;
+        
+        if (url.searchParams.has('streaming')) {
+            url.searchParams.delete('streaming');
+            urlCambiada = true;
+        }
+        if (url.searchParams.has('instrucciones')) {
+            url.searchParams.delete('instrucciones');
+            urlCambiada = true;
+        }
+        
+        if (urlCambiada) {
+            window.history.replaceState({}, '', url);
+        }
+        
         itemSeleccionadoActual=null; 
     }
     
@@ -430,10 +503,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 descripcion:'Disponible para la compra de cuenta por perfil o completo', 
                 imagen:'https://i.imgur.com/71ZnLhB.png', 
                 activo:true, 
+                instrucciones: "1. Ejemplo de instrucciones paso a paso.\n2. Compra y disfruta.", // Añadido para testing local
                 precio:{'1 Mes':'50 Bs', '12 Meses':'350 Bs'} 
             }]; 
             itemsGlobales=ejemplo; 
             renderizarItems(itemsGlobales); 
+            verificarUrlYabrirModal(); // Se llama después de renderizar para abrir el modal si hay link
         },800); 
     }
 
