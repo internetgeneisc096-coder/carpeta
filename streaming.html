@@ -5,96 +5,126 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GenesisRecarga - Streaming</title>
 <style>
-    /* Estilos copiados de catalogo.html y unificados */
-    :root { --bg-color:#0f111a; --card-bg:#1e2130; --primary-color:#00ffcc; --primary-hover:#00ccaa; --text-light:#f0f0f0; --text-muted:#a0a5c0; }
-    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-    body{background-color:var(--bg-color);color:var(--text-light);display:flex;flex-direction:column;min-height:100vh}
+    /* VARIABLES Y RESET */
+    :root { 
+        --bg-color:#0f111a; 
+        --card-bg:#1e2130; 
+        --primary-color:#00ffcc; 
+        --primary-hover:#00ccaa; 
+        --text-light:#f0f0f0; 
+        --text-muted:#a0a5c0; 
+    }
     
-    /* Header Unificado */
-    header{background-color:rgba(20,22,34,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
-    .navbar{display:flex;justify-content:space-between;align-items:center;padding:1rem 5%;max-width:1400px;margin:0 auto;flex-wrap:nowrap;gap:20px}
-    .logo{font-size:1.8rem;font-weight:800;letter-spacing:1px;white-space:nowrap}
-    .logo span{color:var(--primary-color)}
-    .menu{display:flex;gap:20px;flex:1;justify-content:center}
-    .menu a{color:var(--text-light);text-decoration:none;font-weight:500;transition:all 0.3s ease;white-space:nowrap;position:relative;padding-bottom:5px}
-    .menu a:hover{color:var(--primary-color)}
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
+    body { background-color:var(--bg-color); color:var(--text-light); display:flex; flex-direction:column; min-height:100vh; overflow-x: hidden; }
     
-    /* Resaltado de menú activo */
+    /* HEADER Y NAVEGACIÓN */
+    header { background-color:rgba(20,22,34,0.95); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
+    .navbar { display:flex; justify-content:space-between; align-items:center; padding:1rem 5%; max-width:1400px; margin:0 auto; flex-wrap:nowrap; gap:20px; }
+    .logo { font-size:1.8rem; font-weight:800; letter-spacing:1px; white-space:nowrap; }
+    .logo span { color:var(--primary-color); }
+    
+    .menu { display:flex; gap:20px; flex:1; justify-content:center; }
+    .menu a { color:var(--text-light); text-decoration:none; font-weight:500; transition:all 0.3s ease; white-space:nowrap; position:relative; padding-bottom:5px; }
+    .menu a:hover { color:var(--primary-color); }
     .menu a.active { color: var(--primary-color) !important; font-weight: 700; border-bottom: 2px solid var(--primary-color); }
     
-    /* Lado Derecho Nav (Buscador y Usuario) */
-    .nav-right{display:flex;align-items:center;gap:15px;white-space:nowrap}
-    .search{background-color:#2a2e42;border:1px solid #3d4360;color:white;padding:8px 15px;border-radius:20px;outline:none;transition:border-color .3s;width:180px}
-    .search::placeholder{color:rgba(255,255,255,.55)}
-    .search:focus{border-color:var(--primary-color);width:220px}
+    /* CONTROLES DERECHOS (BUSCADOR Y SESIÓN) */
+    .nav-right { display:flex; align-items:center; gap:15px; white-space:nowrap; }
+    .search { background-color:#2a2e42; border:1px solid #3d4360; color:white; padding:8px 15px; border-radius:20px; outline:none; transition:all .3s ease; width:180px; }
+    .search::placeholder { color:rgba(255,255,255,.55); }
+    .search:focus { border-color:var(--primary-color); width:220px; box-shadow: 0 0 8px rgba(0,255,204,0.2); }
     
-    .login-btn{padding:8px 14px;border-radius:20px;color:#25D366;font-weight:700;border:1px solid rgba(37,211,102,0.12);background:transparent;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+    .login-btn { padding:8px 14px; border-radius:20px; color:#25D366; font-weight:700; border:1px solid rgba(37,211,102,0.12); background:transparent; text-decoration:none; display:inline-flex; align-items:center; gap:8px; transition: background-color 0.3s; }
+    .login-btn:hover { background-color: rgba(37,211,102,0.1); }
     
-    /* Menu Usuario Logueado */
     .user-menu { display: none; align-items: center; gap: 10px; }
     .user-profile { display: flex; align-items: center; gap: 10px; background-color: #0b151e; padding: 6px 12px; border-radius: 8px; color: var(--primary-color); font-weight: 500; border: 1px solid #162a3c; }
     .user-icon { width: 20px; height: 20px; stroke: var(--primary-color); }
     .username-text { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; color: var(--primary-color); }
+    
     .logout-btn { background-color: transparent; border: 1px solid #162a3c; border-radius: 8px; padding: 6px 10px; color: #a0a5c0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
     .logout-btn:hover { background-color: #1a2236; color: #fff; border-color: #2d3748; }
     .logout-icon { width: 20px; height: 20px; stroke: currentColor; }
 
-    /* Contenido de Streaming */
-    .section-title{text-align:center;padding:3rem 1rem 1rem}
-    .section-title h2{font-size:2.5rem;margin-bottom:10px}
-    .section-title p{color:var(--text-muted);max-width:600px;margin:0 auto}
-    .container{flex:1;max-width:1200px;margin:0 auto;padding:2rem 5%;width:100%}
-    .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;justify-content:center}
-    .card{background-color:var(--card-bg);border-radius:15px;overflow:hidden;transition:transform .3s,box-shadow .3s;border:1px solid #2a2e42;display:flex;flex-direction:column}
-    .card:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,255,204,.15);border-color:rgba(0,255,204,.4)}
-    .card-icon{height:200px;width:100%;background-color:#2a2e42;display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .card-icon img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-    .card:hover .card-icon img{transform:scale(1.05)}
-    .card-content{padding:1.5rem;display:flex;flex-direction:column;flex:1}
-    .card-content h3{font-size:1.4rem;margin-bottom:10px;color:white}
-    .card-content p{color:var(--text-muted);font-size:.95rem;line-height:1.5;margin-bottom:15px;flex:1}
-    .price{font-size:1.1rem;font-weight:bold;color:var(--primary-color);margin-bottom:15px}
-    .btn{background-color:var(--primary-color);color:#000;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;transition:background-color .3s;text-align:center;text-decoration:none;width:100%;display:inline-block}
-    .btn:hover{background-color:var(--primary-hover)}
-    .btn-agotado{background-color:#2a2e42;color:#7a809c;cursor:not-allowed}
+    /* SECCIÓN PRINCIPAL */
+    .section-title { text-align:center; padding:3rem 1rem 1rem; }
+    .section-title h2 { font-size:2.5rem; margin-bottom:10px; }
+    .section-title p { color:var(--text-muted); max-width:600px; margin:0 auto; }
     
-    /* Modales */
-    .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:15px;opacity:0;transition:opacity .3s ease}
-    .modal.show{display:flex;opacity:1}
-    .modal-content{background-color:var(--card-bg);border-radius:15px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative;border:1px solid var(--primary-color);box-shadow:0 10px 30px rgba(0,255,204,.2);display:flex;flex-direction:column}
-    .modal-header{padding:15px 20px;border-bottom:1px solid #2a2e42;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-    .modal-header h3{margin:0;font-size:1.4rem;color:white;flex:1;min-width:120px}
-    .header-right{display:flex;align-items:center;gap:15px}
-    .currency-toggle-mini{display:flex;align-items:center;background-color:#141622;padding:4px 8px;border-radius:20px;border:1px solid #3d4360;gap:8px}
-    .currency-toggle-mini label{color:white;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:.85rem;font-weight:500;user-select:none}
-    .currency-toggle-mini input[type=radio]{accent-color:var(--primary-color);transform:scale(1.1);cursor:pointer;margin:0}
-    .close-modal{color:var(--text-muted);font-size:28px;font-weight:bold;cursor:pointer;transition:color .3s;line-height:1}
-    .close-modal:hover{color:#ff6b6b}
-    .modal-body{padding:20px;display:flex;flex-direction:column;gap:15px}
-    .modal-image{width:100%;border-radius:10px;background-color:#141622;object-fit:contain;max-height:250px;border:1px solid #2a2e42}
-    .price-list{display:flex;flex-direction:column}
-    .price-label-text{color:var(--text-muted);font-size:.95rem;margin-bottom:8px;display:block}
-    .paquete-select{width:100%;padding:14px 15px;background-color:#2a2e42;color:white;border:1px solid #3d4360;border-radius:8px;font-size:1rem;outline:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300ffcc%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-position:right 15px top 50%;background-size:14px auto;transition:border-color .3s,box-shadow .3s;font-weight:500}
-    .paquete-select:focus,.paquete-select:hover{border-color:var(--primary-color);box-shadow:0 0 8px rgba(0,255,204,.2)}
-    .paquete-select option{background-color:#1e2130;color:white;padding:12px;font-weight:normal}
-    .btn-whatsapp{background-color:#25D366;color:white;margin-top:5px;display:flex;align-items:center;justify-content:center;gap:10px}
-    .btn-whatsapp:hover{background-color:#1ebd5a}
-    .btn-secondary{background-color:#2a2e42;color:white;border:1px solid #3d4360}
-    .btn-secondary:hover{background-color:#323850;border-color:var(--primary-color)}
-    .modal-actions{display:flex;gap:10px;margin-top:5px}
-    .modal-actions .btn{flex:1;margin-top:0;font-size:.95rem}
-    .status-message{grid-column:1 / -1;text-align:center;padding:2rem;color:var(--text-muted);font-size:1.2rem}
+    .container { flex:1; max-width:1200px; margin:0 auto; padding:2rem 5%; width:100%; }
+    .products { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; justify-content:center; }
     
-    footer{text-align:center;padding:2rem;background-color:#141622;color:var(--text-muted);margin-top:auto}
-    .whatsapp-bubble{position:fixed;bottom:30px;right:30px;background-color:#25D366;color:white;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 4px 15px rgba(37,211,102,.4);text-decoration:none;transition:transform .3s;z-index:1000}
-    .whatsapp-bubble:hover{transform:scale(1.1)}
+    /* TARJETAS DE PRODUCTOS */
+    .card { background-color:var(--card-bg); border-radius:15px; overflow:hidden; transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease; border:1px solid #2a2e42; display:flex; flex-direction:column; will-change: transform; }
+    .card:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,255,204,.15); border-color:rgba(0,255,204,.4); }
     
+    .card-icon { height:200px; width:100%; background-color:#2a2e42; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .card-icon img { width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
+    .card:hover .card-icon img { transform:scale(1.05); }
+    
+    .card-content { padding:1.5rem; display:flex; flex-direction:column; flex:1; }
+    .card-content h3 { font-size:1.4rem; margin-bottom:10px; color:white; }
+    .card-content p { color:var(--text-muted); font-size:.95rem; line-height:1.5; margin-bottom:15px; flex:1; }
+    .price { font-size:1.1rem; font-weight:bold; color:var(--primary-color); margin-bottom:15px; }
+    
+    .btn { background-color:var(--primary-color); color:#000; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; transition:background-color .3s, transform .1s; text-align:center; text-decoration:none; width:100%; display:inline-block; }
+    .btn:hover { background-color:var(--primary-hover); }
+    .btn:active { transform: scale(0.98); }
+    .btn-agotado { background-color:#2a2e42; color:#7a809c; cursor:not-allowed; }
+    
+    /* MODALES OPTIMIZADOS */
+    .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,.85); align-items:center; justify-content:center; padding:15px; opacity:0; transition:opacity .3s ease; }
+    .modal.show { display:flex; opacity:1; }
+    
+    /* Añadido efecto de escala para fluidez */
+    .modal-content { background-color:var(--card-bg); border-radius:15px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; position:relative; border:1px solid var(--primary-color); box-shadow:0 10px 30px rgba(0,255,204,.2); display:flex; flex-direction:column; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .modal.show .modal-content { transform: scale(1); }
+    
+    .modal-header { padding:15px 20px; border-bottom:1px solid #2a2e42; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+    .modal-header h3 { margin:0; font-size:1.4rem; color:white; flex:1; min-width:120px; }
+    .header-right { display:flex; align-items:center; gap:15px; }
+    
+    .currency-toggle-mini { display:flex; align-items:center; background-color:#141622; padding:4px 8px; border-radius:20px; border:1px solid #3d4360; gap:8px; }
+    .currency-toggle-mini label { color:white; cursor:pointer; display:flex; align-items:center; gap:4px; font-size:.85rem; font-weight:500; user-select:none; }
+    .currency-toggle-mini input[type=radio] { accent-color:var(--primary-color); transform:scale(1.1); cursor:pointer; margin:0; }
+    
+    .close-modal { color:var(--text-muted); font-size:28px; font-weight:bold; cursor:pointer; transition:color .3s; line-height:1; }
+    .close-modal:hover { color:#ff6b6b; }
+    
+    .modal-body { padding:20px; display:flex; flex-direction:column; gap:15px; }
+    .modal-image { width:100%; border-radius:10px; background-color:#141622; object-fit:contain; max-height:250px; border:1px solid #2a2e42; }
+    
+    .price-list { display:flex; flex-direction:column; }
+    .price-label-text { color:var(--text-muted); font-size:.95rem; margin-bottom:8px; display:block; }
+    
+    .paquete-select { width:100%; padding:14px 15px; background-color:#2a2e42; color:white; border:1px solid #3d4360; border-radius:8px; font-size:1rem; outline:none; appearance:none; cursor:pointer; background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300ffcc%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:right 15px top 50%; background-size:14px auto; transition:border-color .3s,box-shadow .3s; font-weight:500; }
+    .paquete-select:focus, .paquete-select:hover { border-color:var(--primary-color); box-shadow:0 0 8px rgba(0,255,204,.2); }
+    .paquete-select option { background-color:#1e2130; color:white; padding:12px; font-weight:normal; }
+    
+    .btn-whatsapp { background-color:#25D366; color:white; margin-top:5px; display:flex; align-items:center; justify-content:center; gap:10px; }
+    .btn-whatsapp:hover { background-color:#1ebd5a; }
+    
+    .btn-secondary { background-color:#2a2e42; color:white; border:1px solid #3d4360; }
+    .btn-secondary:hover { background-color:#323850; border-color:var(--primary-color); }
+    
+    .modal-actions { display:flex; gap:10px; margin-top:5px; }
+    .modal-actions .btn { flex:1; margin-top:0; font-size:.95rem; }
+    
+    .status-message { grid-column:1 / -1; text-align:center; padding:2rem; color:var(--text-muted); font-size:1.2rem; }
+    
+    /* FOOTER Y WHATSAPP FLOTANTE */
+    footer { text-align:center; padding:2rem; background-color:#141622; color:var(--text-muted); margin-top:auto; }
+    .whatsapp-bubble { position:fixed; bottom:30px; right:30px; background-color:#25D366; color:white; width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 4px 15px rgba(37,211,102,.4); text-decoration:none; transition:transform .3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index:1000; }
+    .whatsapp-bubble:hover { transform:scale(1.15); }
+    
+    /* MEDIA QUERIES RESPONSIVE */
     @media (max-width:900px){
-        .navbar{flex-wrap:wrap;justify-content:center}
-        .menu{order:3;width:100%;justify-content:center;margin-top:15px}
-        .nav-right{width:100%;flex-direction:column;gap:10px;margin-top:10px}
-        .search{width:100%}
-        .user-menu{justify-content:center}
+        .navbar { flex-wrap:wrap; justify-content:center; }
+        .menu { order:3; width:100%; justify-content:center; margin-top:15px; flex-wrap: wrap;}
+        .nav-right { width:100%; flex-direction:column; gap:10px; margin-top:10px; }
+        .search { width:100%; }
+        .user-menu { justify-content:center; }
     }
 </style>
 </head>
@@ -136,31 +166,32 @@
 </header>
 
 <section class="section-title">
-    <h2>Streaming </h2>
+    <h2>Streaming</h2>
     <p>COMPRA TU PRODUCTO STREAMING PARA MIRAR.</p>
 </section>
 
 <section class="container">
     <div class="products" id="streaming-container">
-        <div class="status-message">Conectando con la base de datos de STREAMING...</div>
+        <div class="status-message">Conectando con la base de datos...</div>
     </div>
 </section>
 
-<!-- MODALES -->
+<!-- MODAL DE COMPRA -->
 <div id="compraModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h3 id="modal-title">Título</h3>
             <div class="header-right">
                 <div class="currency-toggle-mini">
-                    <label title="Pagar en Bolivianos"><input type="radio" name="moneda" value="Bs" checked> Bs-BOLIVIANO</label>
-                    <label title="Pagar con USDT (Binance)"><input type="radio" name="moneda" value="USDT"> USDT-BINANCE</label>
+                    <label title="Pagar en Bolivianos"><input type="radio" name="moneda" value="Bs" checked> Bs-BOL</label>
+                    <label title="Pagar con USDT (Binance)"><input type="radio" name="moneda" value="USDT"> USDT</label>
                 </div>
                 <span class="close-modal" id="closeModal">&times;</span>
             </div>
         </div>
         <div class="modal-body">
-            <img id="modal-img" class="modal-image" src="" alt="Imagen" onerror="this.style.display='none'">
+            <!-- loading="lazy" ayuda a la velocidad si pones imágenes pesadas -->
+            <img id="modal-img" class="modal-image" src="" alt="Imagen" loading="lazy" onerror="this.style.display='none'">
             <div id="modal-prices" class="price-list"></div>
             <div class="modal-actions">
                 <button id="btn-instrucciones" class="btn btn-secondary" style="display:none">Instrucciones</button>
@@ -170,14 +201,15 @@
     </div>
 </div>
 
+<!-- MODAL DE INSTRUCCIONES -->
 <div id="instruccionesModal" class="modal">
     <div class="modal-content" style="max-width:400px;">
         <div class="modal-header">
             <h3 style="font-size:1.3rem;">Instrucciones</h3>
             <span class="close-modal" id="closeInstrucciones">&times;</span>
         </div>
-        <div class="modal-body" style="color:white;line-height:1.6;font-size:.95rem;">
-            <p id="texto-instrucciones" style="white-space:pre-wrap;margin:0;"></p>
+        <div class="modal-body" style="color:white; line-height:1.6; font-size:.95rem;">
+            <p id="texto-instrucciones" style="white-space:pre-wrap; margin:0;"></p>
         </div>
     </div>
 </div>
@@ -187,11 +219,11 @@
 <a class="whatsapp-bubble" href="https://wa.me/59177048918" target="_blank" rel="noopener noreferrer" title="Chat WhatsApp">💬</a>
 
 <script>
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
     
     // --- LÓGICA DE MENÚ ACTIVO (RESALTADO) ---
     let currentPage = window.location.pathname.split("/").pop();
-    if (!currentPage || currentPage === "") currentPage = "index.html"; 
+    if (!currentPage) currentPage = "index.html"; 
     
     document.querySelectorAll(".menu a").forEach(link => {
         if (link.getAttribute("href") === currentPage) {
@@ -218,27 +250,53 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
 
     if (logoutBtn) {
-        logoutBtn.addEventListener("click", function() {
+        logoutBtn.addEventListener("click", () => {
             localStorage.removeItem("gr_user");
             window.location.reload();
         });
     }
 
-    // --- LÓGICA DE STREAMING ---
-    let TIPO_CAMBIO_USDT = 9.96;
-    async function obtenerPrecioUSDT(){ 
-        try{ 
+    // --- OPTIMIZACIÓN: CACHÉ DE COTIZACIÓN USDT ---
+    // Evita hacer la petición a allorigins en CADA carga de página (ahorra tiempo y recursos)
+    let TIPO_CAMBIO_USDT = 9.96; // Valor por defecto
+    
+    async function obtenerPrecioUSDT() { 
+        const cacheKey = 'gr_usdt_rate';
+        const cachedData = localStorage.getItem(cacheKey);
+        const ahora = Date.now();
+
+        // Usar caché si tiene menos de 1 hora (3600000 ms)
+        if (cachedData) {
+            const parsedCache = JSON.parse(cachedData);
+            if (ahora - parsedCache.timestamp < 3600000) {
+                TIPO_CAMBIO_USDT = parsedCache.rate;
+                return; // Salir, no necesitamos hacer fetch
+            }
+        }
+
+        try { 
             const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.usdtbol.com/')}`); 
             if(!response.ok) return; 
             const data = await response.json(); 
             const textoPuro = data.contents.replace(/<[^>]+>/g,' '); 
             let match = textoPuro.match(/ÚLTIMA COTIZACIÓN.*?Bs\.(\s*\d+\.\d+)/i); 
             if(!match) match = textoPuro.match(/Bs\.\s*([7-9]\.[0-9]{2}|1[0-5]\.[0-9]{2})/i); 
-            if(match && match[1]) TIPO_CAMBIO_USDT = parseFloat(match[1]); 
-        }catch(e){console.error(e);} 
+            
+            if(match && match[1]) {
+                TIPO_CAMBIO_USDT = parseFloat(match[1]); 
+                // Guardar en caché
+                localStorage.setItem(cacheKey, JSON.stringify({
+                    rate: TIPO_CAMBIO_USDT,
+                    timestamp: ahora
+                }));
+            }
+        } catch(e) {
+            console.warn("No se pudo actualizar el tipo de cambio USDT. Usando valor por defecto/caché.", e);
+        } 
     }
     obtenerPrecioUSDT();
 
+    // --- REFERENCIAS AL DOM ---
     const streamingContainer = document.getElementById('streaming-container');
     const searchInput = document.getElementById('searchInput');
     const modal = document.getElementById('compraModal');
@@ -258,79 +316,86 @@ document.addEventListener('DOMContentLoaded', ()=>{
     let itemSeleccionadoActual = null;
     let monedaSeleccionada = 'Bs';
 
-    radiosMoneda.forEach(radio=>radio.addEventListener('change', (e)=>{ monedaSeleccionada = e.target.value; if(itemSeleccionadoActual) renderizarOpcionesPaquete(); }));
+    // Evento de cambio de moneda
+    radiosMoneda.forEach(radio => radio.addEventListener('change', (e) => { 
+        monedaSeleccionada = e.target.value; 
+        if(itemSeleccionadoActual) renderizarOpcionesPaquete(); 
+    }));
 
-    // FUNCIÓN NUEVA: Verificar la URL para abrir un producto o instrucciones automáticamente
+    // --- UTILIDAD: DEBOUNCE PARA BÚSQUEDA ---
+    // Mejora la fluidez evitando que se filtre el array por CADA letra pulsada instantáneamente.
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    // --- LÓGICA DE URL Y DEEP LINKING ---
     function verificarUrlYabrirModal() {
         const urlParams = new URLSearchParams(window.location.search);
         let streamingIdParam = urlParams.get('streaming'); 
         let instruccionesParam = urlParams.get('instrucciones');
         
         if (instruccionesParam) {
-            // Reemplazar automáticamente el guion bajo "_" por espacio " "
             instruccionesParam = instruccionesParam.replace(/_/g, ' ');
-            
             const productoEncontrado = itemsGlobales.find(p => p.id.toUpperCase() === instruccionesParam.toUpperCase());
             
-            if (productoEncontrado) {
-                // Solo abrimos si realmente tiene instrucciones
-                if (productoEncontrado.instrucciones && productoEncontrado.instrucciones.trim() !== "") {
-                    abrirModal(productoEncontrado);
-                    // Mostrar las instrucciones automáticamente un poco después
-                    setTimeout(() => {
-                        instruccionesModal.style.display = 'flex';
-                        setTimeout(() => instruccionesModal.classList.add('show'), 10);
-                    }, 400); 
-                } else {
-                    console.warn("El producto no tiene instrucciones asignadas. Permaneciendo en catálogo.");
-                }
-            } else {
-                console.warn("Producto desde URL para instrucciones no encontrado: ", instruccionesParam);
+            if (productoEncontrado && productoEncontrado.instrucciones && productoEncontrado.instrucciones.trim() !== "") {
+                abrirModal(productoEncontrado);
+                setTimeout(() => {
+                    instruccionesModal.style.display = 'flex';
+                    // Pequeño delay forzar repintado
+                    requestAnimationFrame(() => {
+                        instruccionesModal.classList.add('show');
+                    });
+                }, 100); 
             }
         } else if (streamingIdParam) {
             streamingIdParam = streamingIdParam.replace(/_/g, ' ');
-            
             const productoEncontrado = itemsGlobales.find(p => p.id.toUpperCase() === streamingIdParam.toUpperCase());
-            
-            if (productoEncontrado) {
-                abrirModal(productoEncontrado);
-            } else {
-                console.warn("Producto desde URL no encontrado: ", streamingIdParam);
-            }
+            if (productoEncontrado) abrirModal(productoEncontrado);
         }
     }
 
+    // --- CARGA DE DATOS ---
     async function cargarStreaming(){
         try{
             const respuesta = await fetch(firebaseURL);
             if(!respuesta.ok) throw new Error('No se pudo leer la base de datos.');
             const datos = await respuesta.json();
-            if(datos){ 
-                itemsGlobales = Object.keys(datos).map(key=>({ id:key, ...datos[key]})); 
+            
+            if(datos) { 
+                itemsGlobales = Object.keys(datos).map(key => ({ id:key, ...datos[key]})); 
                 renderizarItems(itemsGlobales); 
-                verificarUrlYabrirModal(); // Se llama después de renderizar para abrir el modal si hay link
+                verificarUrlYabrirModal(); 
+            } else {
+                streamingContainer.innerHTML = '<div class="status-message">El catálogo está vacío actualmente.</div>';
             }
-            else streamingContainer.innerHTML = '<div class="status-message">El streaming está vacío actualmente.</div>';
         }catch(err){ 
             console.error('Error al cargar STREAMING:',err); 
-            streamingContainer.innerHTML = '<div class="status-message">Error al conectar. Mostrando ejemplos.</div>'; 
+            streamingContainer.innerHTML = '<div class="status-message">Error de conexión. Mostrando datos de ejemplo locales.</div>'; 
             usarDatosDeEjemplo(); 
         }
     }
 
+    // --- OPTIMIZACIÓN: RENDERIZADO CON DOCUMENT FRAGMENT ---
     function renderizarItems(items){ 
         streamingContainer.innerHTML = ''; 
-        if(items.length===0){ 
-            streamingContainer.innerHTML = '<div class="status-message">No hay transmisiones disponibles.</div>'; 
+        if(items.length === 0){ 
+            streamingContainer.innerHTML = '<div class="status-message">No se encontraron resultados.</div>'; 
             return; 
         } 
         
-        items.forEach(item=>{ 
+        // Usar fragmento de documento evita múltiples repintados de la pantalla (mejora FPS)
+        const fragment = document.createDocumentFragment();
+
+        items.forEach(item => { 
             const nombre = item.nombre || item.id; 
             const descripcion = item.descripcion || ''; 
             const imagen = item.imagen || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80'; 
-            const esActivo = item.activo===true || String(item.activo).toLowerCase()==='true'; 
-            const botonHTML = esActivo ? `<button class="btn btn-abrir-modal" data-id="${item.id}">Comprar ${nombre}</button>` : `<button class="btn btn-agotado" disabled>Agotado</button>`; 
+            const esActivo = item.activo === true || String(item.activo).toLowerCase() === 'true'; 
             
             let textoPrecioCard = "Ver opciones";
             if (typeof item.precio === 'string') {
@@ -341,11 +406,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 textoPrecioCard = "Consultar precios";
             }
 
+            const botonHTML = esActivo 
+                ? `<button class="btn btn-abrir-modal" data-id="${item.id}">Comprar ${nombre}</button>` 
+                : `<button class="btn btn-agotado" disabled>Agotado</button>`; 
+
             const card = document.createElement('div'); 
-            card.className='card'; 
+            card.className = 'card'; 
             card.innerHTML = `
                 <div class="card-icon">
-                    <img src="${imagen}" alt="${nombre}" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80'">
+                    <!-- lazy loading implementado aquí -->
+                    <img src="${imagen}" alt="${nombre}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80'">
                 </div>
                 <div class="card-content">
                     <h3>${nombre}</h3>
@@ -353,146 +423,140 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     <div class="price">${textoPrecioCard}</div>
                     ${botonHTML}
                 </div>`; 
-            streamingContainer.appendChild(card); 
+            
+            fragment.appendChild(card); 
         }); 
-    }
-
-    streamingContainer.addEventListener('click',(e)=>{ if(e.target.classList.contains('btn-abrir-modal')){ const id=e.target.getAttribute('data-id'); const it=itemsGlobales.find(i=>i.id===id); if(it) abrirModal(it); } });
-
-    function abrirModal(item){
-
-    // ==========================================
-    // ACTUALIZAR LA URL SIN RECARGAR LA PÁGINA
-    // ==========================================
-    const url = new URL(window.location);
-    url.searchParams.set("streaming", item.id.replace(/ /g, "_"));
-    window.history.replaceState({}, "", url);
-
-    itemSeleccionadoActual = item;
-
-    modalTitle.textContent = item.nombre || item.id;
-
-    modalImg.style.display = 'block';
-    modalImg.src = item.imagenprecio || item.imagen || '';
-
-    if(item.instrucciones && item.instrucciones.trim() !== ''){
-
-        btnInstrucciones.style.display = 'block';
-
-        let textoFinal = (item.instrucciones || '').replace(/\\n/g, '\n');
-
-        const urlRegex = /(https?:\/\/[^\s"'<>]+)/g;
-
-        textoFinal = textoFinal.replace(urlRegex, function(url){
-            return `<a href="${url}" target="_blank" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">${url}</a>`;
-        });
-
-        textoInstrucciones.innerHTML = textoFinal.replace(/\n/g,'<br>');
-
-    }else{
-
-        btnInstrucciones.style.display = 'none';
-
-    }
-
-    document.querySelector('input[name="moneda"][value="Bs"]').checked = true;
-    monedaSeleccionada = 'Bs';
-
-    renderizarOpcionesPaquete();
-
-    modal.style.display = 'flex';
-
-    setTimeout(() => modal.classList.add('show'), 10);
-
-}
-
-    function renderizarOpcionesPaquete(){ 
-        modalPrices.innerHTML=''; 
-        const item=itemSeleccionadoActual; 
-        const labelSelect=document.createElement('label'); 
-        labelSelect.className='price-label-text'; 
-        labelSelect.textContent='Opciones:'; 
-        modalPrices.appendChild(labelSelect); 
-        const select=document.createElement('select'); 
-        select.className='paquete-select'; 
-        select.id='paqueteSelect'; 
         
-        if(typeof item.precio==='object' && item.precio!==null){ 
-            const opciones=Object.entries(item.precio); 
-            opciones.sort((a,b)=>{ 
-                const n=(t)=>{ 
-                    const m=t[0].replace(/,/g,'').match(/\d+/); 
-                    return m?parseInt(m[0],10):0 
+        // Se inyecta todo el contenido de una sola vez
+        streamingContainer.appendChild(fragment);
+    }
+
+    // Delegación de eventos eficiente para botones
+    streamingContainer.addEventListener('click', (e) => { 
+        if(e.target.classList.contains('btn-abrir-modal')){ 
+            const id = e.target.getAttribute('data-id'); 
+            const it = itemsGlobales.find(i => i.id === id); 
+            if(it) abrirModal(it); 
+        } 
+    });
+
+    // --- LÓGICA DE MODALES ---
+    function abrirModal(item) {
+        const url = new URL(window.location);
+        url.searchParams.set("streaming", item.id.replace(/ /g, "_"));
+        window.history.replaceState({}, "", url);
+
+        itemSeleccionadoActual = item;
+        modalTitle.textContent = item.nombre || item.id;
+        
+        modalImg.style.display = 'block';
+        modalImg.src = item.imagenprecio || item.imagen || '';
+
+        if(item.instrucciones && item.instrucciones.trim() !== '') {
+            btnInstrucciones.style.display = 'block';
+            let textoFinal = (item.instrucciones || '').replace(/\\n/g, '\n');
+            const urlRegex = /(https?:\/\/[^\s"'<>]+)/g;
+            textoFinal = textoFinal.replace(urlRegex, function(url){
+                return `<a href="${url}" target="_blank" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">${url}</a>`;
+            });
+            textoInstrucciones.innerHTML = textoFinal.replace(/\n/g,'<br>');
+        } else {
+            btnInstrucciones.style.display = 'none';
+        }
+
+        document.querySelector('input[name="moneda"][value="Bs"]').checked = true;
+        monedaSeleccionada = 'Bs';
+
+        renderizarOpcionesPaquete();
+
+        modal.style.display = 'flex';
+        // RequestAnimationFrame es más seguro que setTimeout para animaciones CSS
+        requestAnimationFrame(() => {
+            modal.classList.add('show');
+        });
+    }
+
+    function renderizarOpcionesPaquete() { 
+        modalPrices.innerHTML = ''; 
+        const item = itemSeleccionadoActual; 
+        
+        const labelSelect = document.createElement('label'); 
+        labelSelect.className = 'price-label-text'; 
+        labelSelect.textContent = 'Opciones:'; 
+        modalPrices.appendChild(labelSelect); 
+        
+        const select = document.createElement('select'); 
+        select.className = 'paquete-select'; 
+        select.id = 'paqueteSelect'; 
+        
+        if(typeof item.precio === 'object' && item.precio !== null) { 
+            const opciones = Object.entries(item.precio); 
+            
+            // Ordenamiento seguro (evita errores si el precio no tiene números)
+            opciones.sort((a,b) => { 
+                const getNum = (t) => { 
+                    const m = String(t[0]).replace(/,/g,'').match(/\d+/); 
+                    return m ? parseInt(m[0],10) : 0;
                 }; 
-                return n(a)-n(b); 
+                return getNum(a) - getNum(b); 
             }); 
-            opciones.forEach(([paquete,valorDB])=>{ 
+            
+            opciones.forEach(([paquete, valorDB]) => { 
                 let precioMostrar = valorDB; 
-                if(monedaSeleccionada==='USDT'){ 
-                    const numeros = valorDB.replace(/,/g,'').match(/[\d.]+/); 
+                if(monedaSeleccionada === 'USDT') { 
+                    const numeros = String(valorDB).replace(/,/g,'').match(/[\d.]+/); 
                     if(numeros && numeros[0]){ 
                         const montoBs = parseFloat(numeros[0]); 
                         const montoUSDT = (montoBs / TIPO_CAMBIO_USDT).toFixed(2); 
                         precioMostrar = `${montoUSDT} USDT`; 
                     } 
                 } 
-                const option=document.createElement('option'); 
+                const option = document.createElement('option'); 
                 option.value = `${paquete} por ${precioMostrar}`; 
                 option.textContent = `${paquete} — ${precioMostrar}`; 
                 select.appendChild(option); 
             }); 
         } else { 
-            const option=document.createElement('option'); 
-            option.value = item.precio || 'Consultar'; 
-            option.textContent = `Opción — ${item.precio || 'Consultar'}`; 
+            const option = document.createElement('option'); 
+            const precioUnico = item.precio || 'Consultar';
+            option.value = precioUnico; 
+            option.textContent = `Opción — ${precioUnico}`; 
             select.appendChild(option); 
         } 
         modalPrices.appendChild(select); 
     }
 
-    btnComprarWa.addEventListener('click',()=>{ 
-        const selectElement=document.getElementById('paqueteSelect'); 
+    // --- ACCIONES DE BOTONES ---
+    btnComprarWa.addEventListener('click', () => { 
+        const selectElement = document.getElementById('paqueteSelect'); 
         if(!selectElement || !selectElement.value || selectElement.disabled){ 
             alert('Por favor, selecciona una opción válida.'); 
             return; 
         } 
-        const paqueteElegido=selectElement.value; 
+        const paqueteElegido = selectElement.value; 
         const nombre = itemSeleccionadoActual.nombre || itemSeleccionadoActual.id; 
-        const metodoPagoText = monedaSeleccionada==='USDT' ? 'USDT (Binance)' : 'Bolivianos (Bs)'; 
+        const metodoPagoText = monedaSeleccionada === 'USDT' ? 'USDT (Binance)' : 'Bolivianos (Bs)'; 
         const mensaje = `Hola GenesisRecarga, me interesa: ${nombre} - ${paqueteElegido} - ${metodoPagoText}`; 
-        const linkWa = `https://wa.me/59177048918?text=${encodeURIComponent(mensaje)}`; 
-        window.open(linkWa,'_blank'); 
+        
+        window.open(`https://wa.me/59177048918?text=${encodeURIComponent(mensaje)}`, '_blank'); 
     });
 
-  btnInstrucciones.addEventListener('click', ()=>{
+    btnInstrucciones.addEventListener('click', () => {
+        const url = new URL(window.location);
+        url.searchParams.delete("streaming");
+        url.searchParams.set("instrucciones", itemSeleccionadoActual.id.replace(/ /g, "_"));
+        window.history.replaceState({}, "", url);
 
-    // ==========================================
-    // ACTUALIZAR LA URL A ?instrucciones=
-    // ==========================================
-    const url = new URL(window.location);
-
-    url.searchParams.delete("streaming");
-    url.searchParams.set(
-        "instrucciones",
-        itemSeleccionadoActual.id.replace(/ /g, "_")
-    );
-
-    window.history.replaceState({}, "", url);
-
-    // Abrir el modal
-    instruccionesModal.style.display = 'flex';
-
-    setTimeout(() => {
-        instruccionesModal.classList.add('show');
-    }, 10);
-
-});
+        instruccionesModal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            instruccionesModal.classList.add('show');
+        });
+    });
     
-    function cerrarInstruccionesModal(){ 
+    function cerrarInstruccionesModal() { 
         instruccionesModal.classList.remove('show'); 
-        setTimeout(()=>instruccionesModal.style.display='none',300); 
+        setTimeout(() => instruccionesModal.style.display = 'none', 300); 
         
-        // Limpiamos la URL si se cierran las instrucciones
         const url = new URL(window.location);
         if (url.searchParams.has('instrucciones')) {
             url.searchParams.delete('instrucciones');
@@ -500,69 +564,62 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
     }
     
-    closeInstruccionesBtn.addEventListener('click', cerrarInstruccionesModal);
-    
-    function cerrarModal(){ 
+    function cerrarModal() { 
         modal.classList.remove('show'); 
-        setTimeout(()=>modal.style.display='none',300); 
+        setTimeout(() => modal.style.display = 'none', 300); 
         
-        // Limpiamos los parámetros de la URL
         const url = new URL(window.location);
         let urlCambiada = false;
         
-        if (url.searchParams.has('streaming')) {
-            url.searchParams.delete('streaming');
-            urlCambiada = true;
-        }
-        if (url.searchParams.has('instrucciones')) {
-            url.searchParams.delete('instrucciones');
-            urlCambiada = true;
-        }
+        if (url.searchParams.has('streaming')) { url.searchParams.delete('streaming'); urlCambiada = true; }
+        if (url.searchParams.has('instrucciones')) { url.searchParams.delete('instrucciones'); urlCambiada = true; }
         
-        if (urlCambiada) {
-            window.history.replaceState({}, '', url);
-        }
-        
-        itemSeleccionadoActual=null; 
+        if (urlCambiada) window.history.replaceState({}, '', url);
+        itemSeleccionadoActual = null; 
     }
     
+    // Eventos para cerrar modales
+    closeInstruccionesBtn.addEventListener('click', cerrarInstruccionesModal);
     closeModalBtn.addEventListener('click', cerrarModal);
     
-    modal.addEventListener('click',(e)=>{ 
-        if(e.target===modal) cerrarModal(); 
+    modal.addEventListener('click', (e) => { 
+        if(e.target === modal) cerrarModal(); 
     }); 
     
-    instruccionesModal.addEventListener('click',(e)=>{ 
-        if(e.target===instruccionesModal) cerrarInstruccionesModal(); 
+    instruccionesModal.addEventListener('click', (e) => { 
+        if(e.target === instruccionesModal) cerrarInstruccionesModal(); 
     });
 
-    function usarDatosDeEjemplo(){ 
-        setTimeout(()=>{ 
-            const ejemplo=[{ 
+    // --- DATOS DE RESPALDO ---
+    function usarDatosDeEjemplo() { 
+        setTimeout(() => { 
+            itemsGlobales = [{ 
                 id:'STR1', 
                 nombre:'Crunchyroll', 
                 descripcion:'Disponible para la compra de cuenta por perfil o completo', 
                 imagen:'https://i.imgur.com/71ZnLhB.png', 
                 activo:true, 
-                instrucciones: "1. Ejemplo de instrucciones paso a paso.\n2. Compra y disfruta.", // Añadido para testing local
+                instrucciones: "1. Ejemplo de instrucciones paso a paso.\n2. Compra y disfruta.",
                 precio:{'1 Mes':'50 Bs', '12 Meses':'350 Bs'} 
             }]; 
-            itemsGlobales=ejemplo; 
             renderizarItems(itemsGlobales); 
-            verificarUrlYabrirModal(); // Se llama después de renderizar para abrir el modal si hay link
-        },800); 
+            verificarUrlYabrirModal(); 
+        }, 800); 
     }
 
-    searchInput.addEventListener('input',(e)=>{ 
-        const termino=e.target.value.toLowerCase(); 
-        const filtrados = itemsGlobales.filter(i=>{ 
-            const n=(i.nombre||i.id).toLowerCase(); 
-            const d=(i.descripcion||'').toLowerCase(); 
+    // --- BÚSQUEDA OPTIMIZADA ---
+    // Usamos la función debounce creada arriba para evitar cálculos excesivos al teclear rápido
+    searchInput.addEventListener('input', debounce((e) => { 
+        const termino = e.target.value.toLowerCase(); 
+        const filtrados = itemsGlobales.filter(i => { 
+            const n = (i.nombre || i.id).toLowerCase(); 
+            const d = (i.descripcion || '').toLowerCase(); 
             return n.includes(termino) || d.includes(termino); 
         }); 
         renderizarItems(filtrados); 
-    });
+    }, 300)); // 300ms de retraso
 
+    // Inicializar
     cargarStreaming();
 });
 </script>
