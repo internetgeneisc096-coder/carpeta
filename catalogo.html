@@ -970,46 +970,72 @@
             }
         });
 
-        function abrirModal(producto) {
-            productoSeleccionadoActual = producto;
-            modalTitle.textContent = producto.nombre || producto.id;
-            
-            modalImg.style.display = 'block';
-            modalImg.src = producto.imagenprecio || producto.imagen || "";
+       function abrirModal(producto) {
 
-            // Manejo del ID de Free Fire
-            const esFreeFire = (producto.id.toUpperCase() === 'FREEFIRE' || producto.id.toUpperCase() === 'FREE_FIRE' || (producto.nombre && producto.nombre.toUpperCase().includes('FREE FIRE')));
-            if (esFreeFire) {
-                playerIdContainer.style.display = 'block';
-                playerIdInput.value = ''; // Limpiar el input al abrir
-            } else {
-                playerIdContainer.style.display = 'none';
-            }
-            
-            // Validamos inmediatamente para bloquear/desbloquear el botón
-            validarEstadoBoton();
+    // ==========================================
+    // ACTUALIZAR LA URL SIN RECARGAR
+    // ==========================================
+    const url = new URL(window.location);
 
-            // Manejo del botón de instrucciones
-            if (producto.instrucciones && producto.instrucciones.trim() !== "") {
-                btnInstrucciones.style.display = 'block';
-                let textoFinal = (producto.instrucciones || "").replace(/\\n/g, "\n");
-                const urlRegex = /(https?:\/\/[^\s"'<>]+)/g;
-                textoFinal = textoFinal.replace(urlRegex, function(url) {
-                    return `<a href="${url}" target="_blank" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">${url}</a>`;
-                });
-                textoInstrucciones.innerHTML = textoFinal.replace(/\n/g, "<br>");
-            } else {
-                btnInstrucciones.style.display = 'none';
-            }
+    url.searchParams.delete("instrucciones");
+    url.searchParams.set("juego", producto.id.replace(/ /g, "_"));
 
-            document.querySelector('input[name="moneda"][value="Bs"]').checked = true;
-            monedaSeleccionada = 'Bs';
+    window.history.replaceState({}, "", url);
 
-            renderizarOpcionesPaquete();
+    productoSeleccionadoActual = producto;
 
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
-        }
+    modalTitle.textContent = producto.nombre || producto.id;
+
+    modalImg.style.display = 'block';
+    modalImg.src = producto.imagenprecio || producto.imagen || "";
+
+    // Manejo del ID de Free Fire
+    const esFreeFire =
+        (producto.id.toUpperCase() === 'FREEFIRE' ||
+         producto.id.toUpperCase() === 'FREE_FIRE' ||
+         (producto.nombre &&
+          producto.nombre.toUpperCase().includes('FREE FIRE')));
+
+    if (esFreeFire) {
+        playerIdContainer.style.display = 'block';
+        playerIdInput.value = '';
+    } else {
+        playerIdContainer.style.display = 'none';
+    }
+
+    validarEstadoBoton();
+
+    if (producto.instrucciones && producto.instrucciones.trim() !== "") {
+
+        btnInstrucciones.style.display = 'block';
+
+        let textoFinal = (producto.instrucciones || "").replace(/\\n/g, "\n");
+
+        const urlRegex = /(https?:\/\/[^\s"'<>]+)/g;
+
+        textoFinal = textoFinal.replace(urlRegex, function(url) {
+            return `<a href="${url}" target="_blank" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">${url}</a>`;
+        });
+
+        textoInstrucciones.innerHTML = textoFinal.replace(/\n/g, "<br>");
+
+    } else {
+
+        btnInstrucciones.style.display = 'none';
+
+    }
+
+    document.querySelector('input[name="moneda"][value="Bs"]').checked = true;
+
+    monedaSeleccionada = 'Bs';
+
+    renderizarOpcionesPaquete();
+
+    modal.style.display = 'flex';
+
+    setTimeout(() => modal.classList.add('show'), 10);
+
+}
 
         function renderizarOpcionesPaquete() {
             modalPrices.innerHTML = ''; 
@@ -1119,10 +1145,29 @@
         });
 
         // --- Eventos Modales ---
-        btnInstrucciones.addEventListener('click', () => {
-            instruccionesModal.style.display = 'flex';
-            setTimeout(() => instruccionesModal.classList.add('show'), 10);
-        });
+      btnInstrucciones.addEventListener('click', () => {
+
+    // ==========================================
+    // CAMBIAR LA URL A ?instrucciones=
+    // ==========================================
+    const url = new URL(window.location);
+
+    url.searchParams.delete("juego");
+
+    url.searchParams.set(
+        "instrucciones",
+        productoSeleccionadoActual.id.replace(/ /g, "_")
+    );
+
+    window.history.replaceState({}, "", url);
+
+    instruccionesModal.style.display = 'flex';
+
+    setTimeout(() => {
+        instruccionesModal.classList.add('show');
+    }, 10);
+
+});
 
         function cerrarInstruccionesModal() {
             instruccionesModal.classList.remove('show');

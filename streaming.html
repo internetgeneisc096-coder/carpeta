@@ -359,30 +359,52 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     streamingContainer.addEventListener('click',(e)=>{ if(e.target.classList.contains('btn-abrir-modal')){ const id=e.target.getAttribute('data-id'); const it=itemsGlobales.find(i=>i.id===id); if(it) abrirModal(it); } });
 
-    function abrirModal(item){ 
-        itemSeleccionadoActual=item; 
-        modalTitle.textContent=item.nombre||item.id; 
-        modalImg.style.display='block'; 
-        modalImg.src=item.imagenprecio||item.imagen||''; 
-        
-        if(item.instrucciones && item.instrucciones.trim()!==''){ 
-            btnInstrucciones.style.display='block'; 
-            let textoFinal=(item.instrucciones||'').replace(/\\n/g,'\n'); 
-            const urlRegex=/(https?:\/\/[^\s"'<>]+)/g; 
-            textoFinal = textoFinal.replace(urlRegex,function(url){ 
-                return `<a href="${url}" target="_blank" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">${url}</a>`; 
-            }); 
-            textoInstrucciones.innerHTML = textoFinal.replace(/\n/g,'<br>'); 
-        } else { 
-            btnInstrucciones.style.display='none'; 
-        } 
-        
-        document.querySelector('input[name="moneda"][value="Bs"]').checked = true; 
-        monedaSeleccionada='Bs'; 
-        renderizarOpcionesPaquete(); 
-        modal.style.display='flex'; 
-        setTimeout(()=>modal.classList.add('show'),10); 
+    function abrirModal(item){
+
+    // ==========================================
+    // ACTUALIZAR LA URL SIN RECARGAR LA PÁGINA
+    // ==========================================
+    const url = new URL(window.location);
+    url.searchParams.set("streaming", item.id.replace(/ /g, "_"));
+    window.history.replaceState({}, "", url);
+
+    itemSeleccionadoActual = item;
+
+    modalTitle.textContent = item.nombre || item.id;
+
+    modalImg.style.display = 'block';
+    modalImg.src = item.imagenprecio || item.imagen || '';
+
+    if(item.instrucciones && item.instrucciones.trim() !== ''){
+
+        btnInstrucciones.style.display = 'block';
+
+        let textoFinal = (item.instrucciones || '').replace(/\\n/g, '\n');
+
+        const urlRegex = /(https?:\/\/[^\s"'<>]+)/g;
+
+        textoFinal = textoFinal.replace(urlRegex, function(url){
+            return `<a href="${url}" target="_blank" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">${url}</a>`;
+        });
+
+        textoInstrucciones.innerHTML = textoFinal.replace(/\n/g,'<br>');
+
+    }else{
+
+        btnInstrucciones.style.display = 'none';
+
     }
+
+    document.querySelector('input[name="moneda"][value="Bs"]').checked = true;
+    monedaSeleccionada = 'Bs';
+
+    renderizarOpcionesPaquete();
+
+    modal.style.display = 'flex';
+
+    setTimeout(() => modal.classList.add('show'), 10);
+
+}
 
     function renderizarOpcionesPaquete(){ 
         modalPrices.innerHTML=''; 
@@ -442,10 +464,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
         window.open(linkWa,'_blank'); 
     });
 
-    btnInstrucciones.addEventListener('click', ()=>{ 
-        instruccionesModal.style.display='flex'; 
-        setTimeout(()=>instruccionesModal.classList.add('show'),10); 
-    });
+  btnInstrucciones.addEventListener('click', ()=>{
+
+    // ==========================================
+    // ACTUALIZAR LA URL A ?instrucciones=
+    // ==========================================
+    const url = new URL(window.location);
+
+    url.searchParams.delete("streaming");
+    url.searchParams.set(
+        "instrucciones",
+        itemSeleccionadoActual.id.replace(/ /g, "_")
+    );
+
+    window.history.replaceState({}, "", url);
+
+    // Abrir el modal
+    instruccionesModal.style.display = 'flex';
+
+    setTimeout(() => {
+        instruccionesModal.classList.add('show');
+    }, 10);
+
+});
     
     function cerrarInstruccionesModal(){ 
         instruccionesModal.classList.remove('show'); 
